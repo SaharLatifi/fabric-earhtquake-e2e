@@ -65,6 +65,3 @@ The final dataset from the **Gold Layer** is used in **Power BI** to build dashb
 
 ---
 
-## Architecture Diagram
-
-(Insert architecture diagram here)
