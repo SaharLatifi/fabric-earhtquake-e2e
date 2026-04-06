@@ -52,7 +52,11 @@ The gold layer prepares the final dataset used for reporting.
 - The dataset is optimized for analytical use
 
 This layer provides the curated data that feeds into reporting and dashboards.
+## Architecture Diagram
 
+![Architecture Diagram](architecture/Architecture.png)
+
+➡️ **[Open full-size diagram](architecture/Architecture.png)**
 ---
 
 ### Visualization
