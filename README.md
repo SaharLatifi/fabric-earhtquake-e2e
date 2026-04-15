@@ -28,6 +28,8 @@ The bronze layer is responsible for data ingestion.
 
 This layer acts as the raw data foundation for the pipeline.
 
+
+[Open Notebook](nb_01_bronze_layer_processing.Notebook/notebook-content.py)
 ---
 
 ### Silver Layer — Cleaned & Structured Data
