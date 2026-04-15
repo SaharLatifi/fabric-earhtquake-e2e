@@ -27,9 +27,48 @@ The bronze layer is responsible for data ingestion.
 - Data is stored with minimal transformation to preserve the original structure
 
 This layer acts as the raw data foundation for the pipeline.
+### Raw Data Structure (USGS API Response)
 
+The USGS Earthquake API returns data in **GeoJSON format**.  
+The response contains two main sections:
 
-[Open Notebook](nb_01_bronze_layer_processing.Notebook/notebook-content.py)
+- **metadata** → Information about the request (API version, query URL, record count, etc.)
+- **features** → The actual earthquake event records
+
+Example structure of the API response:
+
+```json
+{
+  "type": "FeatureCollection",
+  "metadata": {
+    "generated": 1776204023000,
+    "title": "USGS Earthquakes",
+    "status": 200,
+    "count": 4732
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "mag": 1.97,
+        "place": "1 km E of Magas Arriba, Puerto Rico",
+        "time": 1776124505710,
+        "status": "reviewed",
+        "tsunami": 0,
+        "sig": 60,
+        "magType": "md",
+        "type": "earthquake"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-66.7588, 18.0165, 13.01]
+      },
+      "id": "pr71513633"
+    }
+  ]
+}
+```
+🔗[Open Notebook](nb_01_bronze_layer_processing.Notebook/notebook-content.py)
 ---
 
 ### Silver Layer — Cleaned & Structured Data
