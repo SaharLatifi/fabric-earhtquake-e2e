@@ -81,6 +81,20 @@ The silver layer focuses on improving data quality and structure.
 - Data is cleaned and standardized
 - Relevant fields are selected and formatted
 - Data types and schema are improved
+- ### Silver Layer — Data Cleaning and Structuring
+
+The Silver layer transforms the raw earthquake data from the Bronze layer into a structured dataset suitable for analysis.
+
+Key steps include:
+
+- Read raw JSON data from the Bronze Lakehouse
+- Flatten nested JSON objects (`properties`, `geometry`)
+- Extract geographic coordinates into separate columns (`longitude`, `latitude`, `depth`)
+- Select relevant fields required for analysis
+- Rename columns for clarity and consistency
+- Convert data types (timestamps, numeric values)
+- Perform basic data quality checks (null validation, duplicates)
+- Store the cleaned dataset as a structured Silver table
 
 At this stage, the dataset becomes more structured and suitable for analysis.
 
