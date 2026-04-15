@@ -34,6 +34,8 @@ The response contains two main sections:
 
 - **metadata** → Information about the request (API version, query URL, record count, etc.)
 - **features** → The actual earthquake event records
+- The earthquake event records contain nested objects such as **`properties`** and **`geometry`**.  
+These nested fields will be expanded and flattened into individual columns in the **Silver layer** to create a more structured dataset for analysis.
 
 Example structure of the API response:
 
