@@ -35,19 +35,9 @@ from datetime import date , timedelta
 
 # CELL ********************
 
-start_date = date.today() - timedelta(7) 
-end_date = date.today() - timedelta(1)
-
-# METADATA ********************
-
-# META {
-# META   "language": "python",
-# META   "language_group": "synapse_pyspark"
-# META }
-
-# CELL ********************
-
-print(start_date, end_date)
+# start_date = date.today() - timedelta(7) 
+# end_date = date.today() - timedelta(1)
+# print(start_date,end_date)
 
 # METADATA ********************
 
@@ -109,6 +99,7 @@ else:
 
 # CELL ********************
 
+# Store the data in dataframe
 df = spark.read.option("multiline","true").json(f"Files/{file_name}")
 display(df)
 
