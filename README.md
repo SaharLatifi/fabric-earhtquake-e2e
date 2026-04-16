@@ -70,6 +70,25 @@ Example structure of the API response:
   ]
 }
 ```
+### Bronze Layer – Data Ingestion Strategy
+
+The Bronze layer stores the raw data retrieved from the USGS Earthquake API.  
+At each pipeline run, the API is queried for a recent rolling time window (for example, the last 7 days).  
+This helps capture both new earthquake events and possible updates to recently reported events.
+
+Each run saves the API response as a new raw dataset in the Lakehouse.  
+The Bronze layer keeps the original source structure with minimal processing.  
+Any duplicate or modified records are handled later in the Silver layer.
+
+ Schematic
+
+USGS Earthquake API  
+→ Retrieve recent 7 days of data  
+→ Save raw response in Bronze Lakehouse  
+→ Keep all raw snapshots for history  
+→ Clean, deduplicate, and consolidate later in Silver
+
+```
 🔗[Open Notebook](nb_01_bronze_layer_processing.Notebook/notebook-content.py)
 ---
 
