@@ -9,7 +9,7 @@
 # META   "dependencies": {
 # META     "lakehouse": {
 # META       "default_lakehouse": "3463b5ec-ddb9-4967-abc8-c512826faf68",
-# META       "default_lakehouse_name": "lh_earthquake_bronze",
+# META       "default_lakehouse_name": "lh_earthquake",
 # META       "default_lakehouse_workspace_id": "bb1444cd-93a8-4c08-a21a-87ee9a1ca8ad",
 # META       "known_lakehouses": [
 # META         {
@@ -35,9 +35,9 @@ from datetime import date , timedelta
 
 # CELL ********************
 
-start_date = date.today() - timedelta(7) 
-end_date = date.today() - timedelta(1)
-print(start_date,end_date)
+# start_date =  "1990-06-21" # date.today() - timedelta(7) 
+# end_date = "1990-06-22" # date.today() - timedelta(1)
+# print(start_date,end_date)
 
 # METADATA ********************
 
@@ -100,8 +100,8 @@ else:
 # CELL ********************
 
 # Store the data in dataframe
-df = spark.read.option("multiline","true").json(f"Files/{file_name}")
-display(df)
+#df = spark.read.option("multiline","true").json(f"Files/{file_name}")
+#display(df)
 
 # METADATA ********************
 

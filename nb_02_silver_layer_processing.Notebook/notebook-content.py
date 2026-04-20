@@ -9,7 +9,7 @@
 # META   "dependencies": {
 # META     "lakehouse": {
 # META       "default_lakehouse": "3463b5ec-ddb9-4967-abc8-c512826faf68",
-# META       "default_lakehouse_name": "lh_earthquake_bronze",
+# META       "default_lakehouse_name": "lh_earthquake",
 # META       "default_lakehouse_workspace_id": "bb1444cd-93a8-4c08-a21a-87ee9a1ca8ad",
 # META       "known_lakehouses": [
 # META         {
@@ -41,9 +41,9 @@ from datetime import date , timedelta
 
 # CELL ********************
 
-start_date = "2026-04-07" #date.today() - timedelta(7) 
-end_date = "2026-04-14" #date.today() - timedelta(1)
-print(start_date,end_date)
+#start_date = "1990-06-21" #date.today() - timedelta(7) 
+# end_date = "2026-04-14" #date.today() - timedelta(1)
+# print(start_date,end_date)
 
 # METADATA ********************
 
@@ -57,17 +57,7 @@ print(start_date,end_date)
 # Read the raw data from Bronze layer into a dataframe 
 file_name = f"{start_date}_earthquake_data.json"
 df_eq_raw = spark.read.format("json").option("multiline","true").load(f"Files/{file_name}")
-
-# METADATA ********************
-
-# META {
-# META   "language": "python",
-# META   "language_group": "synapse_pyspark"
-# META }
-
-# CELL ********************
-
-display(df_eq_raw)
+#display(df_eq_raw)
 
 # METADATA ********************
 
@@ -101,7 +91,7 @@ df_eq_silver  = df_eq_silver \
                               .withColumn("event_time",date_format(col("event_date_time"), "HH:mm:ss") )  \
                               .withColumn("ingested_at" , current_timestamp()) 
                               
-display(df_eq_silver )
+#display(df_eq_silver )
 
 
 # METADATA ********************
@@ -113,18 +103,8 @@ display(df_eq_silver )
 
 # CELL ********************
 
-df_eq_silver.count()
-
-# METADATA ********************
-
-# META {
-# META   "language": "python",
-# META   "language_group": "synapse_pyspark"
-# META }
-
-# CELL ********************
-
-df_eq_silver.groupBy(col("event_type")).count().show()
+#df_eq_silver.count()
+#df_eq_silver.groupBy(col("event_type")).count().show()
 
 # METADATA ********************
 
@@ -149,7 +129,7 @@ df_eq_silver.groupBy(col("event_type")).count().show()
 # 2. Evaluate critical validation rules
 # 3. If any critical rule fails, raise an error and stop the pipeline
 # 4. If all critical checks pass, proceed to write the Silver dataset
-
+df_eq_silver = df_eq_silver.filter(col("mag").isNotNull())
 
 dq_result = []
 
@@ -250,7 +230,7 @@ df_dq_result_silver.write.mode("append").saveAsTable("silver_earthquake_log")
 # Check if any critical DQ rules failed
 # -----------------------------
 critical_failure = df_dq_result_silver.filter((col("severity") ==  "critical") & (col("passed") == False )).count()
-print(critical_failure)
+#print(critical_failure)
 if critical_failure > 0:
     raise ValueError("Critical data quality checks failed. See silver_dq_log table for details.")
  
@@ -271,8 +251,8 @@ if critical_failure > 0:
 # Other event types returned by the API are excluded from the Silver dataset
 
 df_eq_silver = df_eq_silver.filter((col("event_type") == "earthquake") & (col("status") == "reviewed") )
-df_eq_silver.groupBy(col("event_type")).count().show()
-df_eq_silver.count()
+#df_eq_silver.groupBy(col("event_type")).count().show()
+#df_eq_silver.count()
 
 # METADATA ********************
 
@@ -319,7 +299,7 @@ else:
             "target.event_id = source.event_id"            
         )
         .whenMatchedUpdate(
-            condition="source.updates_at > target.updated_at" ,
+            condition="source.updated_at > target.updated_at" ,
             set ={
                 "event_id" :"source.event_id",
                 "longitude": "source.longitude",
@@ -330,7 +310,7 @@ else:
                 "mag_type":"source.mag_type",
                 "sig":"source.sig",
                 "updated_at":"source.updated_at",
-                "is_tsnami":"source.istsunami",
+                "is_tsunami":"source.is_tsunami",
                 "location":"source.location",
                 "event_date_time":"source.event_date_time",
                 "event_date":"source.event_date",
@@ -351,7 +331,7 @@ else:
                 "mag_type":"source.mag_type",
                 "sig":"source.sig",
                 "updated_at":"source.updated_at",
-                "is_tsnami":"source.istsunami",
+                "is_tsunami":"source.is_tsunami",
                 "location":"source.location",
                 "event_date_time":"source.event_date_time",
                 "event_date":"source.event_date",

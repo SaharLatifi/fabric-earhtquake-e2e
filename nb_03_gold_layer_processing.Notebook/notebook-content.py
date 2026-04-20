@@ -9,7 +9,7 @@
 # META   "dependencies": {
 # META     "lakehouse": {
 # META       "default_lakehouse": "3463b5ec-ddb9-4967-abc8-c512826faf68",
-# META       "default_lakehouse_name": "lh_earthquake_bronze",
+# META       "default_lakehouse_name": "lh_earthquake",
 # META       "default_lakehouse_workspace_id": "bb1444cd-93a8-4c08-a21a-87ee9a1ca8ad",
 # META       "known_lakehouses": [
 # META         {
@@ -57,7 +57,17 @@ def get_country_code(lat,lon):
 
 # CELL ********************
 
-start_date = "2026-04-16"
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
+#start_date = "1999-08-17"
 
 # METADATA ********************
 
@@ -69,17 +79,8 @@ start_date = "2026-04-16"
 # CELL ********************
 
 df_eq = spark.read.table("silver_earthquake").filter(col("ingested_at")> start_date)
-
-# METADATA ********************
-
-# META {
-# META   "language": "python",
-# META   "language_group": "synapse_pyspark"
-# META }
-
-# CELL ********************
-
-display(df_eq)
+# df_eq = spark.read.table("silver_earthquake").filter(col("event_date") == "1990-06-21")
+#display(df_eq)
 
 # METADATA ********************
 
@@ -151,7 +152,7 @@ df_eq_enriched = df_eq_enriched.select(
                     "ingested_at"                                                                                                                       
 
 )        
-                
+#display(df_eq_enriched)             
 
 # METADATA ********************
 
@@ -162,19 +163,8 @@ df_eq_enriched = df_eq_enriched.select(
 
 # CELL ********************
 
-display(df_eq_enriched)
-
-# METADATA ********************
-
-# META {
-# META   "language": "python",
-# META   "language_group": "synapse_pyspark"
-# META }
-
-# CELL ********************
-
-country = get_country_code(18.0165, -66.7588)
-print(country)
+# country = get_country_code(18.0165, -66.7588)
+# print(country)
 
 # METADATA ********************
 
@@ -203,30 +193,35 @@ target_table = "gold_earthquake"
 
 if not spark.catalog.tableExists(target_table):
     df_eq_enriched.write.format("delta").mode("overwrite").saveAsTable(target_table)
-
 else :
-    gold_table = DeltaTable.forName(target_table)
+    gold_table = DeltaTable.forName(spark, target_table)
 
     (
         gold_table.alias("target")
         .merge(
             df_eq_enriched.alias("source"),
-            "target.event_id = source.evebt_id"
+            "target.event_id = source.event_id"
         )
         .whenMatchedUpdate(
             condition = "source.updated_at > target.updated_at" ,
             set = {
                 "event_id": "source.event_id",
-                "event_datetime": "source.event_datetime",
-                "lat": "source.lat",
-                "lon": "source.lon",
+                "event_date_time": "source.event_date_time",
+                "event_date":"source.event_date",
+                "event_time":"source.event_time",
+                "status":"source.status",
+                "latitude": "source.latitude",
+                "longitude": "source.longitude",
                 "depth": "source.depth",
                 "mag": "source.mag",
+                "mag_type":"source.mag_type",
                 "sig": "source.sig",
+                "is_tsunami":"source.is_tsunami",
                 "country_code": "source.country_code",
                 "sig_category": "source.sig_category",
                 "depth_category": "source.depth_category",
                 "hemisphere": "source.hemisphere",
+                "url":"source.url",
                 "updated_at": "source.updated_at",
                 "ingested_at": "source.ingested_at"                
             }
@@ -234,18 +229,24 @@ else :
         .whenNotMatchedInsert(
             values = {
                 "event_id": "source.event_id",
-                "event_datetime": "source.event_datetime",
-                "lat": "source.lat",
-                "lon": "source.lon",
+                "event_date_time": "source.event_date_time",
+                "event_date":"source.event_date",
+                "event_time":"source.event_time",
+                "status":"source.status",
+                "latitude": "source.latitude",
+                "longitude": "source.longitude",
                 "depth": "source.depth",
                 "mag": "source.mag",
+                "mag_type":"source.mag_type",
                 "sig": "source.sig",
+                "is_tsunami":"source.is_tsunami",
                 "country_code": "source.country_code",
                 "sig_category": "source.sig_category",
                 "depth_category": "source.depth_category",
                 "hemisphere": "source.hemisphere",
+                "url":"source.url",
                 "updated_at": "source.updated_at",
-                "ingested_at": "source.ingested_at"
+                "ingested_at": "source.ingested_at"     
             }
         )
         .execute()
