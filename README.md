@@ -140,13 +140,43 @@ This table serves as the **source dataset for the Gold layer**, where additional
 
 ### Gold Layer — Analytics Ready Data
 
-The gold layer prepares the final dataset used for reporting.
+The Gold layer enriches the structured dataset from the Silver layer and prepares it for analytical consumption.
 
-- Additional transformations are applied
-- Aggregations or derived fields may be created
-- The dataset is optimized for analytical use
+At this stage, additional transformations and derived attributes are created to improve the usability of the dataset for reporting and exploration.
 
-This layer provides the curated data that feeds into reporting and dashboards.
+#### Environment Setup
+
+A dedicated **Fabric environment** is attached to the Gold notebook to install and use the `reverse_geocoder` Python library.
+
+This library is used to perform **reverse geocoding**, enabling the pipeline to derive a `country_code` from the geographic coordinates (`latitude`, `longitude`) of each earthquake event.
+
+#### Data Enrichment
+
+The Gold layer adds several analytical attributes to the dataset, including:
+
+- `country_code` — derived from latitude and longitude using reverse geocoding
+- `sig_category` — classification of earthquakes based on the USGS significance score
+- `depth_category` — classification of earthquakes by depth
+- `hemisphere` — geographic hemisphere derived from latitude
+- `ingested_at` — timestamp indicating when the record was processed in the Gold layer
+
+These enrichments improve the dataset's usability for geographic and analytical exploration.
+
+#### Upsert Strategy
+
+The Gold dataset is maintained using an **upsert (MERGE) strategy**:
+
+- Records are matched using `event_id`
+- New records are **inserted**
+- Existing records are **updated only when the source `updated_at` value is newer**
+
+This approach ensures that the Gold dataset remains **idempotent** and avoids duplicate records across pipeline runs.
+
+#### Output Dataset
+
+The result of this stage is a **single enriched event-level table**:
+
+
 ## Architecture Diagram
 
 ![Architecture Diagram](architecture/Architecture.png)
