@@ -89,7 +89,8 @@ df_eq_silver = df_eq_raw.\
 df_eq_silver  = df_eq_silver \
                               .withColumn("event_date",to_date(col("event_date_time")))\
                               .withColumn("event_time",date_format(col("event_date_time"), "HH:mm:ss") )  \
-                              .withColumn("ingested_at" , current_timestamp()) 
+                              .withColumn("ingested_at" , current_timestamp()) \
+                              .withColumn("last_updated_at" , current_timestamp())
                               
 #display(df_eq_silver )
 
@@ -261,6 +262,13 @@ df_eq_silver = df_eq_silver.filter((col("event_type") == "earthquake") & (col("s
 # META   "language_group": "synapse_pyspark"
 # META }
 
+# MARKDOWN ********************
+
+# #### ---------------------------------
+# #### **Load the data in Silver Layer**
+# #### ---------------------------------
+
+
 # CELL ********************
 
 # -----------------------------
@@ -269,10 +277,7 @@ df_eq_silver = df_eq_silver.filter((col("event_type") == "earthquake") & (col("s
 # The Bronze layer retrieves a rolling event window, so the incoming dataset
 # may contain both new records and previously ingested records with updated values.
 #
-# Silver therefore uses an upsert strategy instead of a simple append:
-# - If event_id does not exist in the Silver table, insert the record
-# - If event_id already exists and source.updated_at is newer, update the record
-# - Otherwise, keep the existing record
+# Silver therefore uses an upsert strategy instead.
 
 from delta.tables import DeltaTable
 
@@ -317,7 +322,8 @@ else:
                 "event_time":"source.event_time",
                 "event_type":"source.event_type",
                 "status":"source.status",
-                "ingested_at":"source.ingested_at"
+                "ingested_at":"source.ingested_at" ,
+                "last_updated_at" : current_timestamp()
             }
         )
         .whenNotMatchedInsert(
@@ -328,7 +334,7 @@ else:
                 "depth":"source.depth",
                 "mag":"source.mag",
                 "url":"source.url",
-                "mag_type":"source.mag_type",
+                "mag_type":"source.mag_type", 
                 "sig":"source.sig",
                 "updated_at":"source.updated_at",
                 "is_tsunami":"source.is_tsunami",
@@ -338,7 +344,8 @@ else:
                 "event_time":"source.event_time",
                 "event_type":"source.event_type",
                 "status":"source.status",
-                "ingested_at":"source.ingested_at"
+                "ingested_at":"source.ingested_at" ,
+                "last_updated_at" : current_timestamp()
             }
         )
         .execute()

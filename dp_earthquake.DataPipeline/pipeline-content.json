@@ -141,6 +141,180 @@
             ]
           }
         ]
+      },
+      {
+        "type": "GetMetadata",
+        "typeProperties": {
+          "datasetSettings": {
+            "type": "DataWarehouseTable",
+            "typeProperties": {
+              "schema": "dbo",
+              "table": "dim_country"
+            },
+            "schema": [],
+            "connectionSettings": {
+              "name": "wh_earthquake",
+              "properties": {
+                "type": "DataWarehouse",
+                "typeProperties": {
+                  "artifactId": "ff092a76-b4ad-4ff9-80c6-4c30ba503591",
+                  "endpoint": "rkj7snxuboee3jlafmd3vdymgq-zvcbjo5ismeeziq2q7xjuhfivu.datawarehouse.fabric.microsoft.com",
+                  "workspaceId": "bb1444cd-93a8-4c08-a21a-87ee9a1ca8ad"
+                },
+                "externalReferences": {
+                  "connection": "4f28933b-3443-427b-9eb8-1807cc5fcf9e"
+                },
+                "annotations": []
+              }
+            },
+            "annotations": []
+          },
+          "fieldList": [
+            "exists"
+          ]
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Check if dim_country exists",
+        "dependsOn": [
+          {
+            "activity": "gold layer nb",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "GetMetadata",
+        "typeProperties": {
+          "datasetSettings": {
+            "type": "DataWarehouseTable",
+            "typeProperties": {
+              "schema": "dbo",
+              "table": "dim_date"
+            },
+            "schema": [],
+            "connectionSettings": {
+              "name": "wh_earthquake",
+              "properties": {
+                "type": "DataWarehouse",
+                "typeProperties": {
+                  "artifactId": "ff092a76-b4ad-4ff9-80c6-4c30ba503591",
+                  "endpoint": "rkj7snxuboee3jlafmd3vdymgq-zvcbjo5ismeeziq2q7xjuhfivu.datawarehouse.fabric.microsoft.com",
+                  "workspaceId": "bb1444cd-93a8-4c08-a21a-87ee9a1ca8ad"
+                },
+                "externalReferences": {
+                  "connection": "4f28933b-3443-427b-9eb8-1807cc5fcf9e"
+                },
+                "annotations": []
+              }
+            },
+            "annotations": []
+          },
+          "fieldList": [
+            "exists"
+          ]
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Check if dim_date exists",
+        "dependsOn": [
+          {
+            "activity": "if dim_country exists",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "IfCondition",
+        "typeProperties": {
+          "expression": {
+            "value": "@equals(activity('Check if dim_date exists').output, true)",
+            "type": "Expression"
+          },
+          "ifTrueActivities": [],
+          "ifFalseActivities": [
+            {
+              "type": "RefreshDataflow",
+              "typeProperties": {
+                "dataflowId": "50b2d562-b490-97c0-4ac3-33947f444e75",
+                "workspaceId": "00000000-0000-0000-0000-000000000000",
+                "notifyOption": "NoNotification",
+                "dataflowType": "DataflowFabric"
+              },
+              "policy": {
+                "timeout": "0.12:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "get dim_date",
+              "dependsOn": []
+            }
+          ]
+        },
+        "name": "if dim_date exists",
+        "dependsOn": [
+          {
+            "activity": "Check if dim_date exists",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "IfCondition",
+        "typeProperties": {
+          "expression": {
+            "value": "@equals(activity('Check if dim_country exists').output , true)",
+            "type": "Expression"
+          },
+          "ifTrueActivities": [],
+          "ifFalseActivities": [
+            {
+              "type": "RefreshDataflow",
+              "typeProperties": {
+                "dataflowId": "ef665284-84aa-b5de-492f-b60327c2c3f2",
+                "workspaceId": "00000000-0000-0000-0000-000000000000",
+                "notifyOption": "NoNotification",
+                "dataflowType": "DataflowFabric"
+              },
+              "policy": {
+                "timeout": "0.12:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "get dim_date_copy1",
+              "dependsOn": []
+            }
+          ]
+        },
+        "name": "if dim_country exists",
+        "dependsOn": [
+          {
+            "activity": "Check if dim_country exists",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
       }
     ],
     "variables": {
@@ -149,6 +323,9 @@
       },
       "v_end_date": {
         "type": "String"
+      },
+      "dim_country_exists": {
+        "type": "Boolean"
       }
     }
   }

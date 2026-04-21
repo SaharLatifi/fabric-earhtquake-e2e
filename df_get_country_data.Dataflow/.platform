@@ -1,12 +1,11 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
   "metadata": {
-    "type": "DataPipeline",
-    "displayName": "dp_earthquake",
-    "description": ""
+    "type": "Dataflow",
+    "displayName": "df_get_country_data"
   },
   "config": {
     "version": "2.0",
-    "logicalId": "813a6018-cac5-8ffa-4965-e99bdc0ea9de"
+    "logicalId": "ef665284-84aa-b5de-492f-b60327c2c3f2"
   }
 }

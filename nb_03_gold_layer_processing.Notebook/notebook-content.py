@@ -78,7 +78,7 @@ def get_country_code(lat,lon):
 
 # CELL ********************
 
-df_eq = spark.read.table("silver_earthquake").filter(col("ingested_at")> start_date)
+df_eq = spark.read.table("silver_earthquake").filter(col("event_date")>= start_date)
 # df_eq = spark.read.table("silver_earthquake").filter(col("event_date") == "1990-06-21")
 #display(df_eq)
 
@@ -149,7 +149,8 @@ df_eq_enriched = df_eq_enriched.select(
                     "location",
                     "url", 
                     "updated_at",
-                    "ingested_at"                                                                                                                       
+                    "ingested_at" ,
+                    "last_updated_at"                                                                                                                       
 
 )        
 #display(df_eq_enriched)             
@@ -223,7 +224,8 @@ else :
                 "hemisphere": "source.hemisphere",
                 "url":"source.url",
                 "updated_at": "source.updated_at",
-                "ingested_at": "source.ingested_at"                
+                "ingested_at": "source.ingested_at" ,
+                "last_updated_at" : current_timestamp()               
             }
         )
         .whenNotMatchedInsert(
@@ -246,7 +248,8 @@ else :
                 "hemisphere": "source.hemisphere",
                 "url":"source.url",
                 "updated_at": "source.updated_at",
-                "ingested_at": "source.ingested_at"     
+                "ingested_at": "source.ingested_at"   ,
+                "last_updated_at" : current_timestamp()        
             }
         )
         .execute()
