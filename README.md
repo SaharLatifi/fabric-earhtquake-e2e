@@ -113,10 +113,10 @@ Data quality checks are classified as:
 
 This ensures that invalid or corrupted records **do not propagate to downstream layers**.
 
+
+
 The Silver table uses an **upsert (merge) strategy** to maintain a consolidated dataset of earthquake events.
-
 The result of this stage is a structured **Silver Delta table** containing validated earthquake event records.
-
 This table serves as the **source dataset for the Gold layer**, where additional analytical enrichments are applied.
 
 ### Gold Layer — Analytics Ready Data
@@ -142,20 +142,7 @@ The Gold layer adds several analytical attributes to the dataset, including:
 - `ingested_at` — timestamp indicating when the record was processed in the Gold layer
 
 These enrichments improve the dataset's usability for geographic and analytical exploration.
-
-#### Upsert Strategy
-
-The Gold dataset is maintained using an **upsert (MERGE) strategy**:
-
-- Records are matched using `event_id`
-- New records are **inserted**
-- Existing records are **updated only when the source `updated_at` value is newer**
-
-This approach ensures that the Gold dataset remains **idempotent** and avoids duplicate records across pipeline runs.
-
-#### Output Dataset
-
-The result of this stage is a **single enriched event-level table**:
+The result of this stage is a **single enriched event-level table**
 
 
 ## Architecture Diagram
