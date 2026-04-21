@@ -83,20 +83,15 @@ Example structure of the API response:
 ```
 🔗[Open Notebook](nb_01_bronze_layer_processing.Notebook/notebook-content.py)
 ---
-
 ### Silver Layer — Cleaned & Structured Data
 
-The silver layer focuses on improving data quality and structure.
+The Silver layer transforms the raw earthquake data from the Bronze layer into a **clean, structured dataset** suitable for downstream processing and analysis.
 
-- PySpark notebooks transform the raw data
-- Data is cleaned and standardized
-- Relevant fields are selected and formatted
-- Data types and schema are improved
-- ### Silver Layer — Data Cleaning and Structuring
+This stage focuses on **data standardization, validation, and consolidation** while preserving the core event-level data from the source.
 
-The Silver layer transforms the raw earthquake data from the Bronze layer into a structured dataset suitable for analysis.
+#### Data Transformation
 
-Key steps include:
+Key transformations performed in the Silver layer include:
 
 - Read raw JSON data from the Bronze Lakehouse
 - Flatten nested JSON objects (`properties`, `geometry`)
@@ -104,12 +99,44 @@ Key steps include:
 - Select relevant fields required for analysis
 - Rename columns for clarity and consistency
 - Convert data types (timestamps, numeric values)
-- Perform basic data quality checks (null validation, duplicates)
-- Store the cleaned dataset as a structured Silver table
+- Standardize schema and field formats
 
-At this stage, the dataset becomes more structured and suitable for analysis.
+#### Data Quality Validation
 
----
+The Silver pipeline enforces a set of **data quality checks** to ensure reliability of the dataset before writing to the Silver table.
+
+Examples of validations include:
+
+- `event_id` must be **not null** and **unique**
+- `latitude` and `longitude` must be **not null**
+- `mag` (magnitude) must be **not null**
+- `sig` (significance score) must be within a **valid range**
+- `event_datetime` must contain **valid timestamp values**
+
+Each validation step logs its result to a **data quality monitoring table**.
+
+Data quality checks are classified as:
+
+- **Critical checks** → pipeline execution stops if the rule fails
+- **Non-critical checks** → warnings are logged but processing continues
+
+This ensures that invalid or corrupted records **do not propagate to downstream layers**.
+
+#### Upsert Strategy
+
+The Silver table uses an **upsert (merge) strategy** to maintain a consolidated dataset of earthquake events.
+
+- Records are matched using `event_id`
+- New events are **inserted**
+- Existing records are **updated only when the source `updated_at` value is newer**
+
+This design ensures that the dataset remains **idempotent** and prevents duplicate records across pipeline runs.
+
+#### Output
+
+The result of this stage is a structured **Silver Delta table** containing validated earthquake event records.
+
+This table serves as the **source dataset for the Gold layer**, where additional analytical enrichments are applied.
 
 ### Gold Layer — Analytics Ready Data
 
