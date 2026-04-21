@@ -20,22 +20,31 @@ This project uses the **Medallion Architecture** pattern to organize the data in
 
 ### Bronze Layer — Raw Data
 
-The bronze layer is responsible for data ingestion.
+The Bronze layer stores the raw earthquake data retrieved from the **USGS Earthquake API**.
 
-- A **PySpark notebook** calls the **USGS Earthquake API**
-- Raw earthquake data is collected and stored in the **Fabric Lakehouse**
-- Data is stored with minimal transformation to preserve the original structure
+At each pipeline run, the API is queried using a **rolling time window (last 7 days)**.  
+This approach ensures that both **new earthquake events** and **possible updates to recently reported events** are captured.
 
-This layer acts as the raw data foundation for the pipeline.
-### Raw Data Structure (USGS API Response)
+Each execution saves the API response as a **raw JSON snapshot** in the Fabric Lakehouse.  
+The Bronze layer preserves the **original source structure** and maintains the ingestion history with minimal processing.
 
-The USGS Earthquake API returns data in **GeoJSON format**.  
+Duplicate or modified records are expected at this stage and are handled later in the **Silver layer**.
+
+#### Raw Data Structure (USGS API Response)
+
+The USGS Earthquake API returns data in **GeoJSON format**.
+
 The response contains two main sections:
 
 - **metadata** → Information about the request (API version, query URL, record count, etc.)
 - **features** → The actual earthquake event records
-- The earthquake event records contain nested objects such as **`properties`** and **`geometry`**.  
-These nested fields will be expanded and flattened into individual columns in the **Silver layer** to create a more structured dataset for analysis.
+
+Each element inside `features` represents an earthquake event and contains nested objects such as:
+
+- **properties** → event attributes (magnitude, location description, timestamps, status, etc.)
+- **geometry** → geographic coordinates (`longitude`, `latitude`, `depth`)
+
+These nested fields are expanded and flattened in the **Silver layer** to create a structured dataset suitable for analysis.
 
 Example structure of the API response:
 
@@ -69,24 +78,7 @@ Example structure of the API response:
     }
   ]
 }
-```
-### Bronze Layer – Data Ingestion Strategy
 
-The Bronze layer stores the raw data retrieved from the USGS Earthquake API.  
-At each pipeline run, the API is queried for a recent rolling time window (for example, the last 7 days).  
-This helps capture both new earthquake events and possible updates to recently reported events.
-
-Each run saves the API response as a new raw dataset in the Lakehouse.  
-The Bronze layer keeps the original source structure with minimal processing.  
-Any duplicate or modified records are handled later in the Silver layer.
-
- Schematic
-
-USGS Earthquake API  
-→ Retrieve recent 7 days of data  
-→ Save raw response in Bronze Lakehouse  
-→ Keep all raw snapshots for history  
-→ Clean, deduplicate, and consolidate later in Silver
 
 ```
 🔗[Open Notebook](nb_01_bronze_layer_processing.Notebook/notebook-content.py)
