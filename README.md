@@ -104,15 +104,6 @@ Key transformations performed in the Silver layer include:
 #### Data Quality Validation
 
 The Silver pipeline enforces a set of **data quality checks** to ensure reliability of the dataset before writing to the Silver table.
-
-Examples of validations include:
-
-- `event_id` must be **not null** and **unique**
-- `latitude` and `longitude` must be **not null**
-- `mag` (magnitude) must be **not null**
-- `sig` (significance score) must be within a **valid range**
-- `event_datetime` must contain **valid timestamp values**
-
 Each validation step logs its result to a **data quality monitoring table**.
 
 Data quality checks are classified as:
@@ -122,17 +113,7 @@ Data quality checks are classified as:
 
 This ensures that invalid or corrupted records **do not propagate to downstream layers**.
 
-#### Upsert Strategy
-
 The Silver table uses an **upsert (merge) strategy** to maintain a consolidated dataset of earthquake events.
-
-- Records are matched using `event_id`
-- New events are **inserted**
-- Existing records are **updated only when the source `updated_at` value is newer**
-
-This design ensures that the dataset remains **idempotent** and prevents duplicate records across pipeline runs.
-
-#### Output
 
 The result of this stage is a structured **Silver Delta table** containing validated earthquake event records.
 
