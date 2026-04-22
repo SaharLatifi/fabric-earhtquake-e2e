@@ -152,6 +152,20 @@ The result of this stage is a **single enriched event-level table**
 ➡️ **[Open full-size diagram](architecture/Architecture.png)**
 ---
 
+
+## Analytical Questions
+
+The data model and reporting layer are designed to support exploration of recent earthquake activity and answer questions such as:
+
+- How many earthquakes occurred over time?
+- Which countries experienced the most earthquakes?
+- Which countries had the highest average earthquake magnitude?
+- How are earthquakes distributed by depth category?
+- How are earthquakes distributed by significance category?
+- What are the most significant earthquake events by country?
+- What are the most recent earthquake events in the dataset?
+- How are earthquake events geographically distributed across countries?
+
 ### Visualization
 
 The final dataset from the **Gold Layer** is used in **Power BI** to build dashboards and explore earthquake patterns and insights.
