@@ -3,7 +3,7 @@
   "metadata": {
     "type": "DataPipeline",
     "displayName": "dp_earthquake",
-    "description": ""
+    "description": "Every day fetch data from source. "
   },
   "config": {
     "version": "2.0",
