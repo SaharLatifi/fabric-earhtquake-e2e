@@ -152,6 +152,28 @@ The result of this stage is a **single enriched event-level table**
 ➡️ **[Open full-size diagram](architecture/Architecture.png)**
 ---
 
+## Pipeline Overview
+
+> **Note (Design Simplification)**
+>  
+> To simplify this end-to-end practice project, the pipeline assumes daily execution and processes only the previous day's file.  
+>  
+> I’m aware this approach is not fully idempotent, as missed or failed runs may result in unprocessed data.  
+>  
+> For the purpose of this project, I’ve intentionally skipped implementing a more robust ingestion pattern to keep the pipeline simple and focused on the core flow.
+
+**Bronze Layer (Notebook → Lakehouse)**  
+- Notebook extracts earthquake data from the API for a fixed date range (today-7 to today-1)  
+- Raw data is stored in the Lakehouse (Bronze layer)
+
+**Silver Layer (Notebook → Lakehouse)**  
+- Notebook processes the previous day's file  
+- Applies basic transformations and writes cleaned data to Silver tables in the Lakehouse  
+
+**Gold Layer (Stored Procedure → Warehouse)**  
+- Stored procedure loads data from Silver into dimensional and fact tables  
+- Data is stored in the Warehouse for reporting and analytics  
+
 
 ## Analytical Questions
 
