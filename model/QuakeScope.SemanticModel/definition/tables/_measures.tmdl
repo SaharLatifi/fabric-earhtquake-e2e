@@ -1,0 +1,87 @@
+table _measures
+	lineageTag: 7353f517-de18-44c7-988a-fc78d1a74c03
+
+	measure '_average depth' = AVERAGEX(fact_earthquake, fact_earthquake[depth])
+		lineageTag: 3fbdbf0f-b1b4-4b18-864b-068b758daddb
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '_average mag' = AVERAGEX(fact_earthquake, fact_earthquake[mag])
+		lineageTag: 54e5e700-eac6-47c6-bd03-25420c4b0716
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '_last refresh date' =
+			
+			"Last updated: " &
+			FORMAT(
+			    MAX('fact_earthquake'[updated_at]),
+			    "mmm dd, yyyy hh:mm AM/PM"
+			)
+		lineageTag: 3302fab2-2880-4bb2-88d4-546c1395891f
+
+	measure '_maximum mag' = MAXX(fact_earthquake,fact_earthquake[mag])
+		lineageTag: a948dc5a-bdca-46d2-a339-4553627bbc3b
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '_maximun sig' = MAXX(fact_earthquake,fact_earthquake[sig])
+		formatString: 0
+		lineageTag: 0a0f69dc-de56-4bc3-a075-e10463460c1f
+
+	measure '_number of earhquakes' = COUNTX(fact_earthquake , fact_earthquake[event_id])
+		formatString: 0
+		lineageTag: 4ecedc25-e7e4-48c0-b0d7-310bba3e4b7a
+
+	measure '_recent 5 Earthquakes HTML' =
+			
+			VAR RecentEvents =
+			    TOPN(
+			        5,
+			        ALLSELECTED('fact_earthquake'),
+			        'fact_earthquake'[event_date], DESC,
+			        'fact_earthquake'[event_id], DESC
+			    )
+			
+			RETURN
+			"<div style='font-family:Segoe UI;'>" &
+			"<div style='font-weight:600; font-size:15px; margin-bottom:6px;'>Recent Earthquakes</div>" &
+			CONCATENATEX(
+			    RecentEvents,
+			    "<div style='padding:8px 0; border-bottom:1px dashed #999; font-size:13px;'>" &
+			        "<b>Magnitude:</b> " & FORMAT('fact_earthquake'[mag], "0.0") & "<br>" &
+			        "<b>Depth:</b> " & FORMAT('fact_earthquake'[depth], "0.0") & " km<br>" &
+			        "<b>Country:</b> " &
+			            LOOKUPVALUE(
+			                'dim_country'[country_name],
+			                'dim_country'[country_key],
+			                'fact_earthquake'[country_key]
+			            ) & "<br>" &
+			        "<b>Location:</b> " & 'fact_earthquake'[location] &
+			    "</div>",
+			    "",
+			    'fact_earthquake'[event_date],
+			    DESC
+			) &
+			"</div>"
+		lineageTag: 7720b28b-8ed9-4c89-b3c5-eea2ec60a4f6
+
+	column Column1
+		dataType: string
+		lineageTag: 464f97a7-ef45-4589-bb8a-f0cd363065d1
+		summarizeBy: none
+		sourceColumn: Column1
+
+		annotation SummarizationSetBy = Automatic
+
+	partition _measures = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Column1", type text}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_ResultType = Table
+

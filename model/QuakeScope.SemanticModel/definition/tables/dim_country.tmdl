@@ -1,0 +1,86 @@
+table dim_country
+	lineageTag: eace3fbb-f5c6-4510-9971-6c39651e1dcf
+
+	column country_key
+		dataType: int64
+		formatString: 0
+		lineageTag: 19273add-aba8-480a-8188-5d40d4b5200f
+		summarizeBy: none
+		sourceColumn: country_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column country_name
+		dataType: string
+		lineageTag: 642d4030-87c0-438a-a0c8-e97985d4ccde
+		summarizeBy: none
+		sourceColumn: country_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column country_code
+		dataType: string
+		lineageTag: 2277eab9-61de-452a-bc77-0e41c465d2d4
+		summarizeBy: none
+		sourceColumn: country_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column region
+		dataType: string
+		lineageTag: 1b1ce2b9-1579-45cb-a219-6269d0a431e0
+		summarizeBy: none
+		sourceColumn: region
+
+		annotation SummarizationSetBy = Automatic
+
+	column sub-region
+		dataType: string
+		lineageTag: 218ae99a-6780-48c6-a725-9430ac449834
+		summarizeBy: none
+		sourceColumn: sub-region
+
+		annotation SummarizationSetBy = Automatic
+
+	column intermediate-region
+		dataType: string
+		lineageTag: 933f4229-4a9c-4aa0-92a2-a9ccc8999b0b
+		summarizeBy: none
+		sourceColumn: intermediate-region
+
+		annotation SummarizationSetBy = Automatic
+
+	column region-code
+		dataType: string
+		lineageTag: a61169ef-2d3b-4c1e-aaeb-325416d84dce
+		summarizeBy: none
+		sourceColumn: region-code
+
+		annotation SummarizationSetBy = Automatic
+
+	column sub-region-code
+		dataType: string
+		lineageTag: a648dc8a-659e-40ec-82fe-e24d9ff013ba
+		summarizeBy: none
+		sourceColumn: sub-region-code
+
+		annotation SummarizationSetBy = Automatic
+
+	column intermediate-region-code
+		dataType: string
+		lineageTag: 7b4c4c88-6938-4e06-aa10-5e4ea8c2db15
+		summarizeBy: none
+		sourceColumn: intermediate-region-code
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_country = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Databases("rkj7snxuboee3jlafmd3vdymgq-zvcbjo5ismeeziq2q7xjuhfivu.datawarehouse.fabric.microsoft.com"),
+				    wh_earthquake = Source{[Name="wh_earthquake"]}[Data],
+				    dbo_dim_country = wh_earthquake{[Schema="dbo",Item="dim_country"]}[Data]
+				in
+				    dbo_dim_country
+

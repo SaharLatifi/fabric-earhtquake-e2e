@@ -1,0 +1,52 @@
+table dim_mag_category
+	lineageTag: 0a4ecb5e-3798-4c2b-a645-a40b2e35add9
+
+	column mag_category_key
+		dataType: int64
+		formatString: 0
+		lineageTag: c109350c-ec39-4dbe-a76c-fc1f2d9ed198
+		summarizeBy: none
+		sourceColumn: mag_category_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column category_name
+		dataType: string
+		lineageTag: 3c234261-08d7-462b-9b96-2faa6bcc9edb
+		summarizeBy: none
+		sourceColumn: category_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column min_value
+		dataType: double
+		lineageTag: 06437dea-c941-4ff7-9870-829c8d99eb26
+		summarizeBy: none
+		sourceColumn: min_value
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column max_value
+		dataType: double
+		lineageTag: 3239f213-fd33-4ec1-9d8c-66559372ff1c
+		summarizeBy: none
+		sourceColumn: max_value
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition dim_mag_category = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Databases("rkj7snxuboee3jlafmd3vdymgq-zvcbjo5ismeeziq2q7xjuhfivu.datawarehouse.fabric.microsoft.com"),
+				    wh_earthquake = Source{[Name="wh_earthquake"]}[Data],
+				    dbo_dim_mag_category = wh_earthquake{[Schema="dbo",Item="dim_mag_category"]}[Data]
+				in
+				    dbo_dim_mag_category
+
+	annotation PBI_ResultType = Table
+

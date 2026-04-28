@@ -1,0 +1,60 @@
+table dim_sig_category
+	lineageTag: 8ba879d0-a8bf-4e19-b06c-fc09a8b8e945
+	sourceLineageTag: [dbo].[dim_sig_category]
+
+	column sig_category_key
+		dataType: int64
+		formatString: 0
+		lineageTag: 9ae77ab9-f718-4bc0-95e7-592039efe96a
+		sourceLineageTag: sig_category_key
+		summarizeBy: sum
+		sourceColumn: sig_category_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column category_name
+		dataType: string
+		lineageTag: 560f6b2a-83f6-41c1-ad41-4e5dd9632152
+		sourceLineageTag: category_name
+		summarizeBy: none
+		sourceColumn: category_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column min_value
+		dataType: int64
+		formatString: 0
+		lineageTag: f80b2367-5ded-490d-99b8-9a422b0b6e43
+		sourceLineageTag: min_value
+		summarizeBy: sum
+		sourceColumn: min_value
+
+		annotation SummarizationSetBy = Automatic
+
+	column max_value
+		dataType: int64
+		formatString: 0
+		lineageTag: 8a423597-1d5a-4c97-8b15-fdd66496d147
+		sourceLineageTag: max_value
+		summarizeBy: sum
+		sourceColumn: max_value
+
+		annotation SummarizationSetBy = Automatic
+
+	column sort_order
+		dataType: int64
+		formatString: 0
+		lineageTag: 038b31cb-b28a-4d8c-a3a0-60b58a551fb7
+		sourceLineageTag: sort_order
+		summarizeBy: sum
+		sourceColumn: sort_order
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_sig_category = entity
+		mode: directLake
+		source
+			entityName: dim_sig_category
+			schemaName: dbo
+			expressionSource: 'DirectLake - wh_earthquake'
+

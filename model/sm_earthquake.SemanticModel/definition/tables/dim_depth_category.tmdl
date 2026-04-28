@@ -1,0 +1,58 @@
+table dim_depth_category
+	lineageTag: 3b886bd7-ef92-416b-9912-9909e5498973
+	sourceLineageTag: [dbo].[dim_depth_category]
+
+	column depth_category_key
+		dataType: int64
+		formatString: 0
+		sourceProviderType: smallint
+		lineageTag: 6a767dce-b252-4700-afd0-f3d350ffca0b
+		sourceLineageTag: depth_category_key
+		summarizeBy: none
+		sourceColumn: depth_category_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column category_name
+		dataType: string
+		sourceProviderType: varchar(50)
+		lineageTag: 4c8238e2-4bfb-40c2-91ed-a8739fee8152
+		sourceLineageTag: category_name
+		summarizeBy: none
+		sourceColumn: category_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column min_value
+		dataType: double
+		sourceProviderType: float
+		lineageTag: 584a1b01-0e09-4927-b196-5027bd1ab8d2
+		sourceLineageTag: min_value
+		summarizeBy: none
+		sourceColumn: min_value
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column max_value
+		dataType: double
+		sourceProviderType: float
+		lineageTag: a3cb8230-b43b-41d1-89e5-b72f83f37f14
+		sourceLineageTag: max_value
+		summarizeBy: none
+		sourceColumn: max_value
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition dim_depth_category = entity
+		mode: directLake
+		source
+			entityName: dim_depth_category
+			schemaName: dbo
+			expressionSource: DatabaseQuery
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,380 @@
+{
+  "properties": {
+    "activities": [
+      {
+        "type": "TridentNotebook",
+        "typeProperties": {
+          "notebookId": "2502aae5-8dfd-8f97-4522-79d5b4cc66f4",
+          "workspaceId": "00000000-0000-0000-0000-000000000000",
+          "parameters": {
+            "start_date": {
+              "value": {
+                "value": "@variables('v_start_date')",
+                "type": "Expression"
+              },
+              "type": "string"
+            },
+            "end_date": {
+              "value": {
+                "value": "@variables('v_end_date')",
+                "type": "Expression"
+              },
+              "type": "string"
+            }
+          }
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "bronze layer nb",
+        "dependsOn": [
+          {
+            "activity": "set  param - start_date",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          },
+          {
+            "activity": "set param - end_date",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "SetVariable",
+        "typeProperties": {
+          "variableName": "v_start_date",
+          "value": {
+            "value": "@formatDateTime(adddays(utcNow() , -7 ),'yyyy-MM-dd')",
+            "type": "Expression"
+          }
+        },
+        "policy": {
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "set  param - start_date",
+        "dependsOn": []
+      },
+      {
+        "type": "SetVariable",
+        "typeProperties": {
+          "variableName": "v_end_date",
+          "value": {
+            "value": "@formatDateTime(adddays(utcNow() , -1 ),'yyyy-MM-dd')",
+            "type": "Expression"
+          }
+        },
+        "policy": {
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "set param - end_date",
+        "dependsOn": []
+      },
+      {
+        "type": "TridentNotebook",
+        "typeProperties": {
+          "notebookId": "d510b1d4-0764-b0c2-4660-bb75bc835862",
+          "workspaceId": "00000000-0000-0000-0000-000000000000",
+          "parameters": {
+            "start_date": {
+              "value": {
+                "value": "@variables('v_start_date')",
+                "type": "Expression"
+              },
+              "type": "string"
+            }
+          }
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "silver layer nb",
+        "dependsOn": [
+          {
+            "activity": "bronze layer nb",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "TridentNotebook",
+        "typeProperties": {
+          "notebookId": "3c89bff8-1b98-4a42-a78f-194edafdc384",
+          "workspaceId": "bb1444cd-93a8-4c08-a21a-87ee9a1ca8ad",
+          "parameters": {
+            "start_date": {
+              "value": {
+                "value": "@variables('v_start_date')",
+                "type": "Expression"
+              },
+              "type": "string"
+            }
+          }
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "gold layer nb",
+        "state": "Inactive",
+        "onInactiveMarkAs": "Succeeded",
+        "dependsOn": [
+          {
+            "activity": "silver layer nb",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "GetMetadata",
+        "typeProperties": {
+          "datasetSettings": {
+            "type": "DataWarehouseTable",
+            "typeProperties": {
+              "schema": "dbo",
+              "table": "dim_country"
+            },
+            "schema": [],
+            "connectionSettings": {
+              "name": "wh_earthquake",
+              "properties": {
+                "type": "DataWarehouse",
+                "typeProperties": {
+                  "artifactId": "ff092a76-b4ad-4ff9-80c6-4c30ba503591",
+                  "endpoint": "rkj7snxuboee3jlafmd3vdymgq-zvcbjo5ismeeziq2q7xjuhfivu.datawarehouse.fabric.microsoft.com",
+                  "workspaceId": "bb1444cd-93a8-4c08-a21a-87ee9a1ca8ad"
+                },
+                "externalReferences": {
+                  "connection": "4f28933b-3443-427b-9eb8-1807cc5fcf9e"
+                },
+                "annotations": []
+              }
+            },
+            "annotations": []
+          },
+          "fieldList": [
+            "exists"
+          ]
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Check if dim_country exists",
+        "dependsOn": [
+          {
+            "activity": "gold layer nb",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "GetMetadata",
+        "typeProperties": {
+          "datasetSettings": {
+            "type": "DataWarehouseTable",
+            "typeProperties": {
+              "schema": "dbo",
+              "table": "dim_date"
+            },
+            "schema": [],
+            "connectionSettings": {
+              "name": "wh_earthquake",
+              "properties": {
+                "type": "DataWarehouse",
+                "typeProperties": {
+                  "artifactId": "ff092a76-b4ad-4ff9-80c6-4c30ba503591",
+                  "endpoint": "rkj7snxuboee3jlafmd3vdymgq-zvcbjo5ismeeziq2q7xjuhfivu.datawarehouse.fabric.microsoft.com",
+                  "workspaceId": "bb1444cd-93a8-4c08-a21a-87ee9a1ca8ad"
+                },
+                "externalReferences": {
+                  "connection": "4f28933b-3443-427b-9eb8-1807cc5fcf9e"
+                },
+                "annotations": []
+              }
+            },
+            "annotations": []
+          },
+          "fieldList": [
+            "exists"
+          ]
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Check if dim_date exists",
+        "dependsOn": [
+          {
+            "activity": "if dim_country exists",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "IfCondition",
+        "typeProperties": {
+          "expression": {
+            "value": "@equals(activity('Check if dim_date exists').output, true)",
+            "type": "Expression"
+          },
+          "ifTrueActivities": [],
+          "ifFalseActivities": [
+            {
+              "type": "RefreshDataflow",
+              "typeProperties": {
+                "dataflowId": "7865cece-7642-bf55-4c1a-daff80519263",
+                "workspaceId": "00000000-0000-0000-0000-000000000000",
+                "notifyOption": "NoNotification",
+                "dataflowType": "DataflowFabric"
+              },
+              "policy": {
+                "timeout": "0.12:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "get dim_date",
+              "dependsOn": []
+            }
+          ]
+        },
+        "name": "if dim_date exists",
+        "dependsOn": [
+          {
+            "activity": "Check if dim_date exists",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "IfCondition",
+        "typeProperties": {
+          "expression": {
+            "value": "@equals(activity('Check if dim_country exists').output , true)",
+            "type": "Expression"
+          },
+          "ifTrueActivities": [],
+          "ifFalseActivities": [
+            {
+              "type": "RefreshDataflow",
+              "typeProperties": {
+                "dataflowId": "f516d83f-c4d2-9884-4f5a-6511bc04e99d",
+                "workspaceId": "00000000-0000-0000-0000-000000000000",
+                "notifyOption": "NoNotification",
+                "dataflowType": "DataflowFabric"
+              },
+              "policy": {
+                "timeout": "0.12:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "get dim_date_copy1",
+              "dependsOn": []
+            }
+          ]
+        },
+        "name": "if dim_country exists",
+        "dependsOn": [
+          {
+            "activity": "Check if dim_country exists",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "SqlServerStoredProcedure",
+        "typeProperties": {
+          "storedProcedureName": "[dbo].[sp_load_gold_layer]",
+          "storedProcedureParameters": {
+            "start_date": {
+              "value": {
+                "value": "@variables('v_start_date')",
+                "type": "Expression"
+              },
+              "type": "Datetime"
+            }
+          }
+        },
+        "connectionSettings": {
+          "name": "wh_earthquake",
+          "properties": {
+            "type": "DataWarehouse",
+            "typeProperties": {
+              "artifactId": "ff092a76-b4ad-4ff9-80c6-4c30ba503591",
+              "endpoint": "rkj7snxuboee3jlafmd3vdymgq-zvcbjo5ismeeziq2q7xjuhfivu.datawarehouse.fabric.microsoft.com",
+              "workspaceId": "bb1444cd-93a8-4c08-a21a-87ee9a1ca8ad"
+            },
+            "externalReferences": {
+              "connection": "4f28933b-3443-427b-9eb8-1807cc5fcf9e"
+            },
+            "annotations": []
+          }
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "load dimensional data",
+        "dependsOn": [
+          {
+            "activity": "if dim_date exists",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      }
+    ],
+    "variables": {
+      "v_start_date": {
+        "type": "String"
+      },
+      "v_end_date": {
+        "type": "String"
+      },
+      "dim_country_exists": {
+        "type": "Boolean"
+      }
+    }
+  }
+}

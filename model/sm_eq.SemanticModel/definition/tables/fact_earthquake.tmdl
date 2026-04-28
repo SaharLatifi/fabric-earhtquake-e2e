@@ -1,0 +1,182 @@
+table fact_earthquake
+	lineageTag: f6237317-6f60-4009-b531-f2f0c1021cd8
+	sourceLineageTag: [dbo].[fact_earthquake]
+
+	column event_id
+		dataType: string
+		lineageTag: 949800b2-e8a0-407d-b236-4e3d2b5bfe97
+		sourceLineageTag: event_id
+		summarizeBy: none
+		sourceColumn: event_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column event_date
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 28c6bb83-f7bd-4be5-84fa-ee29997a8595
+		sourceLineageTag: event_date
+		summarizeBy: none
+		sourceColumn: event_date
+
+		annotation SummarizationSetBy = Automatic
+
+	column event_time
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: ecf89418-c4ad-49cf-9a07-86aa22153704
+		sourceLineageTag: event_time
+		summarizeBy: none
+		sourceColumn: event_time
+
+		annotation SummarizationSetBy = Automatic
+
+	column country_key
+		dataType: int64
+		formatString: 0
+		lineageTag: 19a891c8-f8e4-47fa-822d-c18ce867bd5f
+		sourceLineageTag: country_key
+		summarizeBy: sum
+		sourceColumn: country_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column sig
+		dataType: int64
+		formatString: 0
+		lineageTag: f9978df4-bb85-4038-a0e1-1409e3bacd18
+		sourceLineageTag: sig
+		summarizeBy: sum
+		sourceColumn: sig
+
+		annotation SummarizationSetBy = Automatic
+
+	column mag
+		dataType: double
+		lineageTag: ed26ef5b-57dc-47c5-b210-b0187ef3460e
+		sourceLineageTag: mag
+		summarizeBy: sum
+		sourceColumn: mag
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column mag_category_key
+		dataType: int64
+		formatString: 0
+		lineageTag: e8c854e0-f233-40c8-b07e-cd49ac9c157e
+		sourceLineageTag: mag_category_key
+		summarizeBy: sum
+		sourceColumn: mag_category_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column sig_category_key
+		dataType: int64
+		formatString: 0
+		lineageTag: 43fc98f3-e30f-4326-bd7e-3fc4494f4f75
+		sourceLineageTag: sig_category_key
+		summarizeBy: sum
+		sourceColumn: sig_category_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column depth_category_key
+		dataType: int64
+		formatString: 0
+		lineageTag: 7b19e5a4-7915-4bf4-9bce-7b998790f98b
+		sourceLineageTag: depth_category_key
+		summarizeBy: sum
+		sourceColumn: depth_category_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_tsunami
+		dataType: int64
+		formatString: 0
+		lineageTag: 0cf8614d-ec3a-427f-acbc-cbe33a3b5829
+		sourceLineageTag: is_tsunami
+		summarizeBy: sum
+		sourceColumn: is_tsunami
+
+		annotation SummarizationSetBy = Automatic
+
+	column lat
+		dataType: double
+		lineageTag: c78c072d-64be-485b-add8-f9f55753ce47
+		sourceLineageTag: lat
+		summarizeBy: sum
+		sourceColumn: lat
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column lon
+		dataType: double
+		lineageTag: 85182fd1-66f8-4b36-94dc-e81ca7ef62ce
+		sourceLineageTag: lon
+		summarizeBy: sum
+		sourceColumn: lon
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column depth
+		dataType: double
+		lineageTag: b70375e0-0ff3-4a24-9f8e-f9e2f26670a5
+		sourceLineageTag: depth
+		summarizeBy: sum
+		sourceColumn: depth
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column hemisphere
+		dataType: string
+		lineageTag: ffe87c0a-e6f5-4e29-aa75-a9a43f36107d
+		sourceLineageTag: hemisphere
+		summarizeBy: none
+		sourceColumn: hemisphere
+
+		annotation SummarizationSetBy = Automatic
+
+	column updated_at
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: e8d8cb4e-87f8-4202-af9c-5abc22ddf3e5
+		sourceLineageTag: updated_at
+		summarizeBy: none
+		sourceColumn: updated_at
+
+		annotation SummarizationSetBy = Automatic
+
+	column ingested_at
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: f489a00e-d40b-4c54-9711-16812642326d
+		sourceLineageTag: ingested_at
+		summarizeBy: none
+		sourceColumn: ingested_at
+
+		annotation SummarizationSetBy = Automatic
+
+	column location
+		dataType: string
+		lineageTag: 4a1922b0-6e1f-421e-a7dd-242ea700473f
+		sourceLineageTag: location
+		summarizeBy: none
+		sourceColumn: location
+
+		annotation SummarizationSetBy = Automatic
+
+	partition fact_earthquake = entity
+		mode: directLake
+		source
+			entityName: fact_earthquake
+			schemaName: dbo
+			expressionSource: 'DirectLake - wh_earthquake'
+

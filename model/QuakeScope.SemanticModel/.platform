@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "QuakeScope"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "a2b53c27-feda-a127-4b84-96397193db6c"
+  }
+}

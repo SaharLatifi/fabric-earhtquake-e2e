@@ -1,0 +1,9 @@
+expression 'DirectLake - wh_earthquake' =
+		let
+		    Source = AzureStorage.DataLake("https://onelake.dfs.fabric.microsoft.com/bb1444cd-93a8-4c08-a21a-87ee9a1ca8ad/ff092a76-b4ad-4ff9-80c6-4c30ba503591", [HierarchicalNavigation=true])
+		in
+		    Source
+	lineageTag: 9051ea24-8c1c-4b00-be2b-689ef7c50d2d
+
+	annotation PBI_IncludeFutureArtifacts = False
+

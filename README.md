@@ -2,66 +2,114 @@
 
 ## Project Overview
 
-This project explores global earthquake data using Microsoft Fabric.  
-The data is sourced from the USGS Earthquake API and processed through an end-to-end data pipeline.
+This project explores global earthquake data using Microsoft Fabric. The data is sourced from the USGS Earthquake API and processed through an end-to-end data pipeline.
 
-The project follows a **Medallion Architecture (Bronze, Silver, Gold)** to progressively improve the structure, quality, and usability of the data.  
-The final curated dataset is used to build a Power BI report for analysis and visualization.
+The solution follows a **Medallion Architecture (Bronze, Silver, Gold)** to progressively improve the structure, quality, and usability of the data. Raw API data is ingested into the Bronze layer, cleaned and enriched in the Silver layer, and transformed into curated analytics-ready tables in the Gold layer.
 
-Data Source:  
+The final dataset is used to build a Power BI report that helps analyze earthquake activity by location, magnitude, depth, significance, and time.
+
+**Data Source:**  
 USGS Earthquake API  
 https://earthquake.usgs.gov/fdsnws/event/1/
 
 ---
+## Business Questions
 
+The data model and reporting layer are designed to support analysis of global earthquake activity and answer questions such as:
+
+- How does earthquake frequency change over time?
+- Which countries experience the highest number of earthquakes?
+- Which countries have the highest average earthquake magnitude?
+- What is the distribution of earthquakes by depth category?
+- What is the distribution of earthquakes by significance level?
+- Which countries are associated with the most significant earthquake events?
+- What are the most recent earthquake events?
+- How are earthquake events geographically distributed across countries?
+---
 ## Architecture
 
-This project uses the **Medallion Architecture** pattern to organize the data into three layers.
+This project follows the Medallion Architecture pattern to structure data processing into three layers: Bronze, Silver, and Gold.
 
-### Bronze Layer — Raw Data
+### Bronze — Raw Data
+- Ingests earthquake data from the USGS API using a rolling 7-day window  
+- Stores raw JSON snapshots in the Fabric Lakehouse  
+- Preserves source structure with minimal transformation  
+- Captures both new and updated events  
 
-The bronze layer is responsible for data ingestion.
+### Silver — Cleaned & Structured Data
+- Flattens and standardizes the raw JSON data  
+- Extracts key fields (magnitude, location, timestamps, coordinates)  
+- Applies data quality validations (critical and non-critical checks)  
+- Maintains a consolidated dataset by handling new and updated records
+  
+### Gold — Analytics-Ready Data
+- Enriches data for analytical use  
+- Derives country from coordinates using reverse geocoding, enabled through a dedicated Fabric environment
+- Enriches the dataset with derived attributes (significance, depth)
+- Produces a curated dataset optimized for reporting and Power BI  
 
-- A **PySpark notebook** calls the **USGS Earthquake API**
-- Raw earthquake data is collected and stored in the **Fabric Lakehouse**
-- Data is stored with minimal transformation to preserve the original structure
 
-This layer acts as the raw data foundation for the pipeline.
+An architecture diagram is provided below to illustrate the end-to-end data flow.
+
+![Architecture](docs/Architecture.png)
 
 ---
+## Data Model
+The solution uses a star schema design to support efficient analytical queries.
 
-### Silver Layer — Cleaned & Structured Data
+- **fact_earthquake** contains event-level data (magnitude, time, location, depth, significance)
+- Dimension tables provide descriptive context:
+  - **dim_country**
+  - **dim_mag_category**
+  - **dim_depth_category**
+  - **dim_sig_category**
+  - **dim_date**
 
-The silver layer focuses on improving data quality and structure.
-
-- PySpark notebooks transform the raw data
-- Data is cleaned and standardized
-- Relevant fields are selected and formatted
-- Data types and schema are improved
-
-At this stage, the dataset becomes more structured and suitable for analysis.
+This structure enables flexible analysis across geographic, temporal, and categorical dimensions.
+![Data Model](docs/data-model.png)
 
 ---
+## Data Pipeline
 
-### Gold Layer — Analytics Ready Data
+The pipeline orchestrates the end-to-end data flow from ingestion to analytics using notebooks, dataflows, and a stored procedure.
 
-The gold layer prepares the final dataset used for reporting.
+> **Note (Design Simplification)**  
+> The pipeline uses a rolling 7-day window (today-7 to today-1) to capture new and updated events.  
+> Idempotency and full reprocessing logic are simplified for this project but would be required in a production setting.
 
-- Additional transformations are applied
-- Aggregations or derived fields may be created
-- The dataset is optimized for analytical use
+### Bronze Layer (Notebook → Lakehouse)
+- Extracts earthquake data from the USGS API using a rolling 7-day window  
+- Stores raw JSON data in the Lakehouse  
 
-This layer provides the curated data that feeds into reporting and dashboards.
-## Architecture Diagram
+### Silver Layer (Notebook → Lakehouse)
+- Processes raw data from the Bronze layer  
+- Applies transformations and data quality checks  
+- Writes structured data to Silver tables  
 
-![Architecture Diagram](architecture/Architecture.png)
+### Gold Layer (Stored Procedure → Warehouse)
+- Loads data from Silver into dimensional and fact tables  
+- Uses a stored procedure to populate the analytical model  
+- Stores data in the Warehouse for reporting and Power BI
+  
+- ![Pipeline](docs/data-pipeline.png)
 
-➡️ **[Open full-size diagram](architecture/Architecture.png)**
 ---
+## Dashboard (Power BI)
+The Power BI dashboard provides an interactive view of global earthquake activity.
 
-### Visualization
+Users can explore:
+- Earthquake trends over time  
+- Geographic distribution by country  
+- Distribution by depth and significance  
+- Recent and high-impact earthquake events  
 
-The final dataset from the **Gold Layer** is used in **Power BI** to build dashboards and explore earthquake patterns and insights.
+The final semantic model from the **Gold Layer** is used in **Power BI** to build dashboards and explore earthquake patterns and insights.
+
+
+[🔗 View Interactive Dashboard](https://app.fabric.microsoft.com/view?r=eyJrIjoiNzgzYWVmMzYtMzE1ZC00ZmIwLWIyZDQtODcxOTdjNThhZWE0IiwidCI6IjM2Zjk5MzhhLTBiZjQtNGQ4OC1hNTYwLTJiMDdiYThmMGMzNCJ9) 
+
+- ![Dashboard](docs/dashboard-scrshot.png)
+
 
 ---
 

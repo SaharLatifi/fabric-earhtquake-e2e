@@ -1,0 +1,98 @@
+table dim_date
+	lineageTag: b3b72f31-5333-4c14-9496-73ac13ee3e62
+	sourceLineageTag: [dbo].[dim_date]
+
+	column date_key
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: cd2281cd-eefa-4c1a-94fa-6f603d1d4dd3
+		sourceLineageTag: date_key
+		summarizeBy: sum
+		sourceColumn: date_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column date
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: date
+		lineageTag: c9d70c2a-01de-42e3-8f63-f212f7a9edfc
+		sourceLineageTag: date
+		summarizeBy: none
+		sourceColumn: date
+
+		annotation SummarizationSetBy = Automatic
+
+	column year
+		dataType: double
+		sourceProviderType: float
+		lineageTag: 88b8d003-3321-48c6-8491-296b46da2708
+		sourceLineageTag: year
+		summarizeBy: sum
+		sourceColumn: year
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column month_num
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 5756b6b1-564b-44be-9a30-edc302f951fc
+		sourceLineageTag: month_num
+		summarizeBy: sum
+		sourceColumn: month_num
+
+		annotation SummarizationSetBy = Automatic
+
+	column month_name
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 8a6814be-c3e6-4a46-a0ca-7063b53660cb
+		sourceLineageTag: month_name
+		summarizeBy: none
+		sourceColumn: month_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column month_short_name
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 4ab4a458-2bbf-4ab5-9804-2b1a911c2e1a
+		sourceLineageTag: month_short_name
+		summarizeBy: none
+		sourceColumn: month_short_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column northern_hemispher_season
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 02d12fd2-23b2-4285-9fe0-f1c3dfbe6ec5
+		sourceLineageTag: northern_hemispher_season
+		summarizeBy: none
+		sourceColumn: northern_hemispher_season
+
+		annotation SummarizationSetBy = Automatic
+
+	column southern_hemoispher_season
+		dataType: string
+		sourceProviderType: varchar(8000)
+		lineageTag: 41f0aa65-9696-4550-b76d-eeb390956a4b
+		sourceLineageTag: southern_hemoispher_season
+		summarizeBy: none
+		sourceColumn: southern_hemoispher_season
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_date = entity
+		mode: directLake
+		source
+			entityName: dim_date
+			schemaName: dbo
+			expressionSource: DatabaseQuery
+
+	annotation PBI_ResultType = Table
+

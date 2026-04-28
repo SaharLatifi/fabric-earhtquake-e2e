@@ -1,0 +1,33 @@
+{
+  "formatVersion": "202502",
+  "computeEngineSettings": {
+    "allowModernEvaluationEngine": true
+  },
+  "name": "df_load_dim_date",
+  "queryGroups": [],
+  "documentLocale": "en-US",
+  "queriesMetadata": {
+    "dim_date": {
+      "queryId": "6e86783e-d5f1-4d8d-a1c0-bc4c9586e647",
+      "queryName": "dim_date"
+    },
+    "dim_date_DataDestination": {
+      "queryId": "42ae1779-da92-45b6-8aef-0af677cc9851",
+      "queryName": "dim_date_DataDestination",
+      "isHidden": true,
+      "loadEnabled": false
+    }
+  },
+  "connections": [
+    {
+      "path": "https://6x2gqg-my.sharepoint.com/personal/sahar_6x2gqg_onmicrosoft_com/",
+      "kind": "Web",
+      "connectionId": "{\"ClusterId\":\"7e2967ce-3b4b-44e6-aa12-f193fe1b1946\",\"DatasourceId\":\"38cd60cc-a550-49dc-b326-96bbf6214568\"}"
+    },
+    {
+      "path": "Warehouse",
+      "kind": "Warehouse",
+      "connectionId": "{\"ClusterId\":\"7e2967ce-3b4b-44e6-aa12-f193fe1b1946\",\"DatasourceId\":\"4f28933b-3443-427b-9eb8-1807cc5fcf9e\"}"
+    }
+  ]
+}

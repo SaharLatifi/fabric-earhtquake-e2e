@@ -1,0 +1,27 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-US
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBI_QueryOrder = ["dim_country","dim_date","dim_depth_category","dim_sig_category","fact_earthquake","dim_mag_category","_measures"]
+
+ref table dim_country
+ref table dim_date
+ref table DateTableTemplate_cf6a8736-4f84-48d2-b012-9c1cf8e12696
+ref table LocalDateTable_d9e7ea50-ee8a-4d53-b76e-ddcc4ec0a6c5
+ref table dim_depth_category
+ref table dim_sig_category
+ref table fact_earthquake
+ref table LocalDateTable_801d2089-4def-4656-b4ce-d65b555a3cea
+ref table LocalDateTable_2fd8a440-4ce5-4f02-b81c-4018bcc5fae0
+ref table LocalDateTable_92fb519e-a879-49fd-b6d4-429c25124783
+ref table dim_mag_category
+ref table _measures
+
+ref cultureInfo en-US
+
