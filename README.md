@@ -2,195 +2,112 @@
 
 ## Project Overview
 
-This project explores global earthquake data using Microsoft Fabric.  
-The data is sourced from the USGS Earthquake API and processed through an end-to-end data pipeline.
+This project explores global earthquake data using Microsoft Fabric. The data is sourced from the USGS Earthquake API and processed through an end-to-end data pipeline.
 
-The project follows a **Medallion Architecture (Bronze, Silver, Gold)** to progressively improve the structure, quality, and usability of the data.  
-The final curated dataset is used to build a Power BI report for analysis and visualization.
+The solution follows a **Medallion Architecture (Bronze, Silver, Gold)** to progressively improve the structure, quality, and usability of the data. Raw API data is ingested into the Bronze layer, cleaned and enriched in the Silver layer, and transformed into curated analytics-ready tables in the Gold layer.
 
-Data Source:  
+The final dataset is used to build a Power BI report that helps analyze earthquake activity by location, magnitude, depth, significance, and time.
+
+**Data Source:**  
 USGS Earthquake API  
 https://earthquake.usgs.gov/fdsnws/event/1/
 
 ---
+## Business Questions
 
+The data model and reporting layer are designed to support analysis of global earthquake activity and answer questions such as:
+
+- How does earthquake frequency change over time?
+- Which countries experience the highest number of earthquakes?
+- Which countries have the highest average earthquake magnitude?
+- What is the distribution of earthquakes by depth category?
+- What is the distribution of earthquakes by significance level?
+- Which countries are associated with the most significant earthquake events?
+- What are the most recent earthquake events?
+- How are earthquake events geographically distributed across countries?
+---
 ## Architecture
 
-This project uses the **Medallion Architecture** pattern to organize the data into three layers.
+This project follows the Medallion Architecture pattern to structure data processing into three layers: Bronze, Silver, and Gold.
 
-### Bronze Layer — Raw Data
+### Bronze — Raw Data
+- Ingests earthquake data from the USGS API using a rolling 7-day window  
+- Stores raw JSON snapshots in the Fabric Lakehouse  
+- Preserves source structure with minimal transformation  
+- Captures both new and updated events  
 
-The Bronze layer stores the raw earthquake data retrieved from the **USGS Earthquake API**.
-
-At each pipeline run, the API is queried using a **rolling time window (last 7 days)**.  
-This approach ensures that both **new earthquake events** and **possible updates to recently reported events** are captured.
-
-Each execution saves the API response as a **raw JSON snapshot** in the Fabric Lakehouse.  
-The Bronze layer preserves the **original source structure** and maintains the ingestion history with minimal processing.
-
-Duplicate or modified records are expected at this stage and are handled later in the **Silver layer**.
-
-#### Raw Data Structure (USGS API Response)
-
-The USGS Earthquake API returns data in **GeoJSON format**.
-
-The response contains two main sections:
-
-- **metadata** → Information about the request (API version, query URL, record count, etc.)
-- **features** → The actual earthquake event records
-
-Each element inside `features` represents an earthquake event and contains nested objects such as:
-
-- **properties** → event attributes (magnitude, location description, timestamps, status, etc.)
-- **geometry** → geographic coordinates (`longitude`, `latitude`, `depth`)
-
-These nested fields are expanded and flattened in the **Silver layer** to create a structured dataset suitable for analysis.
-
-Example structure of the API response:
-
-```json
-{
-  "type": "FeatureCollection",
-  "metadata": {
-    "generated": 1776204023000,
-    "title": "USGS Earthquakes",
-    "status": 200,
-    "count": 4732
-  },
-  "features": [
-    {
-      "type": "Feature",
-      "properties": {
-        "mag": 1.97,
-        "place": "1 km E of Magas Arriba, Puerto Rico",
-        "time": 1776124505710,
-        "status": "reviewed",
-        "tsunami": 0,
-        "sig": 60,
-        "magType": "md",
-        "type": "earthquake"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-66.7588, 18.0165, 13.01]
-      },
-      "id": "pr71513633"
-    }
-  ]
-}
+### Silver — Cleaned & Structured Data
+- Flattens and standardizes the raw JSON data  
+- Extracts key fields (magnitude, location, timestamps, coordinates)  
+- Applies data quality validations (critical and non-critical checks)  
+- Maintains a consolidated dataset by handling new and updated records
+  
+### Gold — Analytics-Ready Data
+- Enriches data for analytical use  
+- Derives country from coordinates using reverse geocoding, enabled through a dedicated Fabric environment
+- Enriches the dataset with derived attributes (significance, depth)
+- Produces a curated dataset optimized for reporting and Power BI  
 
 
-```
-🔗[Open Notebook](nb_01_bronze_layer_processing.Notebook/notebook-content.py)
+An architecture diagram is provided below to illustrate the end-to-end data flow.
+
+![Architecture](docs/Architecture.png)
+
 ---
-### Silver Layer — Cleaned & Structured Data
+## Data Model
+The solution uses a star schema design to support efficient analytical queries.
 
-The Silver layer transforms the raw earthquake data from the Bronze layer into a **clean, structured dataset** suitable for downstream processing and analysis.
+- **fact_earthquake** contains event-level data (magnitude, time, location, depth, significance)
+- Dimension tables provide descriptive context:
+  - **dim_country**
+  - **dim_mag_category**
+  - **dim_depth_category**
+  - **dim_sig_category**
+  - **dim_date**
 
-This stage focuses on **data standardization, validation, and consolidation** while preserving the core event-level data from the source.
+This structure enables flexible analysis across geographic, temporal, and categorical dimensions.
+![Data Model](docs/data-model.png)
 
-#### Data Transformation
-
-Key transformations performed in the Silver layer include:
-
-- Read raw JSON data from the Bronze Lakehouse
-- Flatten nested JSON objects (`properties`, `geometry`)
-- Extract geographic coordinates into separate columns (`longitude`, `latitude`, `depth`)
-- Select relevant fields required for analysis
-- Rename columns for clarity and consistency
-- Convert data types (timestamps, numeric values)
-- Standardize schema and field formats
-
-#### Data Quality Validation
-
-The Silver pipeline enforces a set of **data quality checks** to ensure reliability of the dataset before writing to the Silver table.
-Each validation step logs its result to a **data quality monitoring table**.
-
-Data quality checks are classified as:
-
-- **Critical checks** → pipeline execution stops if the rule fails
-- **Non-critical checks** → warnings are logged but processing continues
-
-This ensures that invalid or corrupted records **do not propagate to downstream layers**.
-
-
-
-The Silver table uses an **upsert (merge) strategy** to maintain a consolidated dataset of earthquake events.
-The result of this stage is a structured **Silver Delta table** containing validated earthquake event records.
-This table serves as the **source dataset for the Gold layer**, where additional analytical enrichments are applied.
-
-### Gold Layer — Analytics Ready Data
-
-The Gold layer enriches the structured dataset from the Silver layer and prepares it for analytical consumption.
-
-At this stage, additional transformations and derived attributes are created to improve the usability of the dataset for reporting and exploration.
-
-#### Environment Setup
-
-A dedicated **Fabric environment** is attached to the Gold notebook to install and use the `reverse_geocoder` Python library.
-
-This library is used to perform **reverse geocoding**, enabling the pipeline to derive a `country_code` from the geographic coordinates (`latitude`, `longitude`) of each earthquake event.
-
-#### Data Enrichment
-
-The Gold layer adds several analytical attributes to the dataset, including:
-
-- `country_code` — derived from latitude and longitude using reverse geocoding
-- `sig_category` — classification of earthquakes based on the USGS significance score
-- `depth_category` — classification of earthquakes by depth
-- `hemisphere` — geographic hemisphere derived from latitude
-- `ingested_at` — timestamp indicating when the record was processed in the Gold layer
-
-These enrichments improve the dataset's usability for geographic and analytical exploration.
-The result of this stage is a **single enriched event-level table**
-
-
-## Architecture Diagram
-
-![Architecture Diagram](architecture/Architecture.png)
-
-➡️ **[Open full-size diagram](architecture/Architecture.png)**
 ---
+## Data Pipeline
 
-## Pipeline Overview
+The pipeline orchestrates the end-to-end data flow from ingestion to analytics using notebooks, dataflows, and a stored procedure.
 
-> **Note (Design Simplification)**
->  
-> To simplify this end-to-end practice project, the pipeline assumes daily execution and processes only the previous day's file.  
->  
-> I’m aware this approach is not fully idempotent, as missed or failed runs may result in unprocessed data.  
->  
-> For the purpose of this project, I’ve intentionally skipped implementing a more robust ingestion pattern to keep the pipeline simple and focused on the core flow.
+> **Note (Design Simplification)**  
+> The pipeline uses a rolling 7-day window (today-7 to today-1) to capture new and updated events.  
+> Idempotency and full reprocessing logic are simplified for this project but would be required in a production setting.
 
-**Bronze Layer (Notebook → Lakehouse)**  
-- Notebook extracts earthquake data from the API for a fixed date range (today-7 to today-1)  
-- Raw data is stored in the Lakehouse (Bronze layer)
+### Bronze Layer (Notebook → Lakehouse)
+- Extracts earthquake data from the USGS API using a rolling 7-day window  
+- Stores raw JSON data in the Lakehouse  
 
-**Silver Layer (Notebook → Lakehouse)**  
-- Notebook processes the previous day's file  
-- Applies basic transformations and writes cleaned data to Silver tables in the Lakehouse  
+### Silver Layer (Notebook → Lakehouse)
+- Processes raw data from the Bronze layer  
+- Applies transformations and data quality checks  
+- Writes structured data to Silver tables  
 
-**Gold Layer (Stored Procedure → Warehouse)**  
-- Stored procedure loads data from Silver into dimensional and fact tables  
-- Data is stored in the Warehouse for reporting and analytics  
+### Gold Layer (Stored Procedure → Warehouse)
+- Loads data from Silver into dimensional and fact tables  
+- Uses a stored procedure to populate the analytical model  
+- Stores data in the Warehouse for reporting and Power BI
+  
+- ![Pipeline](docs/data-pipeline.png)
 
+---
+## Dashboard (Power BI)
+The Power BI dashboard provides an interactive view of global earthquake activity.
 
-## Analytical Questions
+Users can explore:
+- Earthquake trends over time  
+- Geographic distribution by country  
+- Distribution by depth and significance  
+- Recent and high-impact earthquake events  
 
-The data model and reporting layer are designed to support exploration of recent earthquake activity and answer questions such as:
+The final semantic model from the **Gold Layer** is used in **Power BI** to build dashboards and explore earthquake patterns and insights.
 
-- How many earthquakes occurred over time?
-- Which countries experienced the most earthquakes?
-- Which countries had the highest average earthquake magnitude?
-- How are earthquakes distributed by depth category?
-- How are earthquakes distributed by significance category?
-- What are the most significant earthquake events by country?
-- What are the most recent earthquake events in the dataset?
-- How are earthquake events geographically distributed across countries?
+[🔗 View Interactive Dashboard](<your-public-link-here>)
 
-### Visualization
-
-The final dataset from the **Gold Layer** is used in **Power BI** to build dashboards and explore earthquake patterns and insights.
+![Dashboard](docs/dashboard.png)
 
 ---
 
