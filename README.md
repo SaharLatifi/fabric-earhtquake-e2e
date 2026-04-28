@@ -66,6 +66,7 @@ A dedicated Fabric environment is used to install the `reverse_geocoder` library
 An architecture diagram is provided below to illustrate the end-to-end data flow.
 
 ![Architecture](docs/Architecture.png)
+
 ---
 ## Data Model
 The solution uses a star schema design to support efficient analytical queries.
@@ -81,7 +82,7 @@ The solution uses a star schema design to support efficient analytical queries.
 This structure enables flexible analysis across geographic, temporal, and categorical dimensions.
 ![Data Model](docs/data-model.png)
 
-
+---
 ## Data Pipeline
 
 The pipeline orchestrates the end-to-end data flow from ingestion to analytics using notebooks, dataflows, and a stored procedure.
@@ -103,24 +104,24 @@ The pipeline orchestrates the end-to-end data flow from ingestion to analytics u
 - Loads data from Silver into dimensional and fact tables  
 - Uses a stored procedure to populate the analytical model  
 - Stores data in the Warehouse for reporting and Power BI
-- 
-- ![Pipeline](docs/pipeline.png)
+  
+- ![Pipeline](docs/data-pipeline.png)
 
+---
+## Dashboard (Power BI)
+The Power BI dashboard provides an interactive view of global earthquake activity.
 
-
-
-
-
-
-
-
-
-
-
-
-### Visualization
+Users can explore:
+- Earthquake trends over time  
+- Geographic distribution by country  
+- Distribution by depth and significance  
+- Recent and high-impact earthquake events  
 
 The final dataset from the **Gold Layer** is used in **Power BI** to build dashboards and explore earthquake patterns and insights.
+
+[🔗 View Interactive Dashboard](<your-public-link-here>)
+
+![Dashboard](docs/dashboard.png)
 
 ---
 
