@@ -105,9 +105,11 @@ Users can explore:
 
 The final semantic model from the **Gold Layer** is used in **Power BI** to build dashboards and explore earthquake patterns and insights.
 
-[🔗 View Interactive Dashboard](<your-public-link-here>)
 
-![Dashboard](docs/dashboard.png)
+[🔗 View Interactive Dashboard](https://app.fabric.microsoft.com/view?r=eyJrIjoiNzgzYWVmMzYtMzE1ZC00ZmIwLWIyZDQtODcxOTdjNThhZWE0IiwidCI6IjM2Zjk5MzhhLTBiZjQtNGQ4OC1hNTYwLTJiMDdiYThmMGMzNCJ9) 
+
+- ![Pipeline](docs/dashboard-src-shot.png)
+
 
 ---
 
