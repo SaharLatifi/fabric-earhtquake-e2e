@@ -1,4 +1,3 @@
-git add .
 CREATE     PROCEDURE dbo.sp_load_gold_layer
     @start_date DATE
 AS
