@@ -1,0 +1,58 @@
+table dim_mag_category
+	lineageTag: 1168c89d-d064-4fb3-9043-96fd885115e2
+	sourceLineageTag: [dbo].[dim_mag_category]
+
+	column mag_category_key
+		dataType: int64
+		formatString: 0
+		sourceProviderType: smallint
+		lineageTag: 3a520db7-d8b0-4ca1-8d72-bfdbabf48483
+		sourceLineageTag: mag_category_key
+		summarizeBy: none
+		sourceColumn: mag_category_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column category_name
+		dataType: string
+		sourceProviderType: varchar(50)
+		lineageTag: 67f0f3fa-1e1c-49b0-94be-741f4f6745da
+		sourceLineageTag: category_name
+		summarizeBy: none
+		sourceColumn: category_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column min_value
+		dataType: double
+		sourceProviderType: float
+		lineageTag: 8faefe98-46cb-4d1f-85ec-a07aeeb7f049
+		sourceLineageTag: min_value
+		summarizeBy: none
+		sourceColumn: min_value
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column max_value
+		dataType: double
+		sourceProviderType: float
+		lineageTag: d0c2e092-9aaf-454e-8b3b-e729f0691cc9
+		sourceLineageTag: max_value
+		summarizeBy: none
+		sourceColumn: max_value
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition dim_mag_category = entity
+		mode: directLake
+		source
+			entityName: dim_mag_category
+			schemaName: dbo
+			expressionSource: DatabaseQuery
+
+	annotation PBI_ResultType = Table
+

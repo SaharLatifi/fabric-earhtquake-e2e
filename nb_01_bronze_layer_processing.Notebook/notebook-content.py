@@ -35,9 +35,9 @@ from datetime import date , timedelta
 
 # CELL ********************
 
-# start_date =  "1990-06-21" # date.today() - timedelta(7) 
-# end_date = "1990-06-22" # date.today() - timedelta(1)
-# print(start_date,end_date)
+#start_date =   date.today() - timedelta(20) 
+#end_date =  date.today() - timedelta(14)
+#print(start_date,end_date)
 
 # METADATA ********************
 

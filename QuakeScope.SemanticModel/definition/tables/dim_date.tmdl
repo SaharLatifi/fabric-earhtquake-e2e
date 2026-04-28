@@ -1,0 +1,89 @@
+table dim_date
+	lineageTag: 250a6b8f-5623-4cee-a5a2-0013168ce3cf
+
+	column date_key
+		dataType: int64
+		formatString: 0
+		lineageTag: bbef8460-db8e-4277-bc2f-983206a8368d
+		summarizeBy: sum
+		sourceColumn: date_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 30f8fb7b-ad3d-4791-8d41-bba4be54da71
+		summarizeBy: none
+		sourceColumn: date
+
+		variation Variation
+			isDefault
+			relationship: 1785d709-3264-46a9-b127-f3772c14d004
+			defaultHierarchy: LocalDateTable_d9e7ea50-ee8a-4d53-b76e-ddcc4ec0a6c5.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column year
+		dataType: double
+		lineageTag: e3ae3313-bc21-4a8e-8d88-980c0a92b108
+		summarizeBy: sum
+		sourceColumn: year
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column month_num
+		dataType: int64
+		formatString: 0
+		lineageTag: 5ee6e38a-ff63-4081-876e-ae2f51e6064c
+		summarizeBy: sum
+		sourceColumn: month_num
+
+		annotation SummarizationSetBy = Automatic
+
+	column month_name
+		dataType: string
+		lineageTag: ae8561c9-06ad-46e2-a047-608bc3e5b69f
+		summarizeBy: none
+		sourceColumn: month_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column month_short_name
+		dataType: string
+		lineageTag: a2bd5602-fd21-49bc-835c-119539a35311
+		summarizeBy: none
+		sourceColumn: month_short_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column northern_hemispher_season
+		dataType: string
+		lineageTag: da61bd78-a78c-4cfb-bffe-154a59a2d210
+		summarizeBy: none
+		sourceColumn: northern_hemispher_season
+
+		annotation SummarizationSetBy = Automatic
+
+	column southern_hemoispher_season
+		dataType: string
+		lineageTag: 77b3d5df-bc03-4ac7-bc38-961810df3e13
+		summarizeBy: none
+		sourceColumn: southern_hemoispher_season
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_date = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Databases("rkj7snxuboee3jlafmd3vdymgq-zvcbjo5ismeeziq2q7xjuhfivu.datawarehouse.fabric.microsoft.com"),
+				    wh_earthquake = Source{[Name="wh_earthquake"]}[Data],
+				    dbo_dim_date = wh_earthquake{[Schema="dbo",Item="dim_date"]}[Data]
+				in
+				    dbo_dim_date
+

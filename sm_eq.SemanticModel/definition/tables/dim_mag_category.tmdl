@@ -1,0 +1,52 @@
+table dim_mag_category
+	lineageTag: 889caba5-1d1e-4367-bb44-b74aeb477379
+	sourceLineageTag: [dbo].[dim_mag_category]
+
+	column mag_category_key
+		dataType: int64
+		formatString: 0
+		lineageTag: bce7b811-b833-464e-83dc-8af87eed1f98
+		sourceLineageTag: mag_category_key
+		summarizeBy: sum
+		sourceColumn: mag_category_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column category_name
+		dataType: string
+		lineageTag: e1125b52-5524-41e7-a7dd-1356a2630746
+		sourceLineageTag: category_name
+		summarizeBy: none
+		sourceColumn: category_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column min_value
+		dataType: double
+		lineageTag: 3b027e4a-fd92-4839-815f-50d7f8b2c00c
+		sourceLineageTag: min_value
+		summarizeBy: sum
+		sourceColumn: min_value
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column max_value
+		dataType: double
+		lineageTag: 6f10ff08-66a6-4d3e-a5de-357798e8306c
+		sourceLineageTag: max_value
+		summarizeBy: sum
+		sourceColumn: max_value
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition dim_mag_category = entity
+		mode: directLake
+		source
+			entityName: dim_mag_category
+			schemaName: dbo
+			expressionSource: 'DirectLake - wh_earthquake'
+

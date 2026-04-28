@@ -1,0 +1,52 @@
+table dim_depth_category
+	lineageTag: 13b5a0f4-38d6-47fd-888b-02ee7d365de6
+	sourceLineageTag: [dbo].[dim_depth_category]
+
+	column depth_category_key
+		dataType: int64
+		formatString: 0
+		lineageTag: 50cb7291-1311-43eb-9ac3-a99842a84b96
+		sourceLineageTag: depth_category_key
+		summarizeBy: sum
+		sourceColumn: depth_category_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column category_name
+		dataType: string
+		lineageTag: cfb6a676-b91f-4896-9d3f-2c284287fbdb
+		sourceLineageTag: category_name
+		summarizeBy: none
+		sourceColumn: category_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column min_value
+		dataType: double
+		lineageTag: bea04635-6e0e-43ce-a342-5da80fb295dc
+		sourceLineageTag: min_value
+		summarizeBy: sum
+		sourceColumn: min_value
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column max_value
+		dataType: double
+		lineageTag: 00c9a3c4-2e31-44bc-86fe-1a95db826b2e
+		sourceLineageTag: max_value
+		summarizeBy: sum
+		sourceColumn: max_value
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition dim_depth_category = entity
+		mode: directLake
+		source
+			entityName: dim_depth_category
+			schemaName: dbo
+			expressionSource: 'DirectLake - wh_earthquake'
+

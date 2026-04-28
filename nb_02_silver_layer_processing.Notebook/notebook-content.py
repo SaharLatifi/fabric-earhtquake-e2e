@@ -16,6 +16,10 @@
 # META           "id": "3463b5ec-ddb9-4967-abc8-c512826faf68"
 # META         }
 # META       ]
+# META     },
+# META     "environment": {
+# META       "environmentId": "cc19c67d-30ac-9309-421f-1d703391b911",
+# META       "workspaceId": "00000000-0000-0000-0000-000000000000"
 # META     }
 # META   }
 # META }
@@ -28,8 +32,8 @@
 
 # CELL ********************
 
-from pyspark.sql.functions import col,current_timestamp ,from_unixtime , to_date , date_format
-from pyspark.sql.types import IntegerType, TimestampType
+from pyspark.sql.functions import col,current_timestamp ,from_unixtime , to_date , date_format ,udf,when
+from pyspark.sql.types import IntegerType, TimestampType , StringType 
 from datetime import date , timedelta 
 
 # METADATA ********************
@@ -68,6 +72,25 @@ df_eq_raw = spark.read.format("json").option("multiline","true").load(f"Files/{f
 
 # CELL ********************
 
+import reverse_geocoder as rgc
+def get_country_code(lat,lon):
+    """
+    Returns ISO country code for given latitude and longitude.
+    """
+    result = rgc.search([(lat,lon)], mode =1 )
+    return result[0]['cc']
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
+
+get_country_code_udf = udf(get_country_code, StringType())
 df_eq_silver = df_eq_raw.\
                 select(
                         col("id").alias("event_id"),
@@ -79,7 +102,7 @@ df_eq_silver = df_eq_raw.\
                         col("properties.magtype").alias("mag_type"),
                         col("properties.sig").alias("sig"),
                         from_unixtime(col("properties.updated")/1000).cast("timestamp").alias("updated_at"),
-                        col("properties.tsunami").alias("is_tsunami"),
+                        col("properties.tsunami").alias("tsunami"),
                         col("properties.place").alias("location"),
                         from_unixtime(col("properties.time")/1000).cast("timestamp").alias("event_date_time"),
                         col("properties.type").alias("event_type") ,
@@ -87,6 +110,12 @@ df_eq_silver = df_eq_raw.\
                 )
 
 df_eq_silver  = df_eq_silver \
+                              .withColumn("country_code" , get_country_code_udf(col("latitude"),col("longitude"))) \
+                              .withColumn("is_tsunami", when(col("tsunami") == 1, True).otherwise(False)) \
+                              .withColumn("hemisphere" ,
+                                    when(col("latitude") >=0 , "Northern")
+                                    .otherwise("Southern")
+                                ) \
                               .withColumn("event_date",to_date(col("event_date_time")))\
                               .withColumn("event_time",date_format(col("event_date_time"), "HH:mm:ss") )  \
                               .withColumn("ingested_at" , current_timestamp()) \

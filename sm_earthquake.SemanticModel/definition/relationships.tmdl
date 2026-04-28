@@ -1,0 +1,20 @@
+relationship 528a90ef-e9f2-caf2-88ff-160af6d34c09
+	fromColumn: fact_earthquake.sig_category_key
+	toColumn: dim_sig_category.sig_category_key
+
+relationship 2817df21-e562-19b0-8edc-34ce10ec1b14
+	fromColumn: fact_earthquake.mag_category_key
+	toColumn: dim_mag_category.mag_category_key
+
+relationship 4a9de7ef-8ed8-1faa-3d4e-c52d4a4c1b31
+	fromColumn: fact_earthquake.depth_category_key
+	toColumn: dim_depth_category.depth_category_key
+
+relationship ffa5162b-abc0-109f-77f8-1e0edf97ab0e
+	fromColumn: fact_earthquake.country_key
+	toColumn: dim_country.country_key
+
+relationship 157834ea-b15b-1b83-1a9a-86b8d3d8f8a3
+	fromColumn: dim_date.date
+	toColumn: fact_earthquake.event_date
+

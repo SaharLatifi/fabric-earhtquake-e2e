@@ -1,0 +1,40 @@
+relationship 1785d709-3264-46a9-b127-f3772c14d004
+	joinOnDateBehavior: datePartOnly
+	fromColumn: dim_date.date
+	toColumn: LocalDateTable_d9e7ea50-ee8a-4d53-b76e-ddcc4ec0a6c5.Date
+
+relationship bf196c51-8cf4-4cdd-a65a-af15e6df900d
+	joinOnDateBehavior: datePartOnly
+	fromColumn: fact_earthquake.event_time
+	toColumn: LocalDateTable_801d2089-4def-4656-b4ce-d65b555a3cea.Date
+
+relationship bb67d19f-8951-4eac-b65c-1836d3e81265
+	joinOnDateBehavior: datePartOnly
+	fromColumn: fact_earthquake.updated_at
+	toColumn: LocalDateTable_2fd8a440-4ce5-4f02-b81c-4018bcc5fae0.Date
+
+relationship 9e4cf4b6-0e90-44f9-9191-b9c1ae0f9222
+	joinOnDateBehavior: datePartOnly
+	fromColumn: fact_earthquake.ingested_at
+	toColumn: LocalDateTable_92fb519e-a879-49fd-b6d4-429c25124783.Date
+
+relationship AutoDetected_b195f51b-1bff-4003-ba6c-6a50f0fc0094
+	fromColumn: fact_earthquake.country_key
+	toColumn: dim_country.country_key
+
+relationship AutoDetected_9964f9ad-0c2d-4954-a401-fe4d20562e34
+	fromColumn: fact_earthquake.depth_category_key
+	toColumn: dim_depth_category.depth_category_key
+
+relationship AutoDetected_40c25311-8732-4213-be75-e754bc8c740b
+	fromColumn: fact_earthquake.sig_category_key
+	toColumn: dim_sig_category.sig_category_key
+
+relationship AutoDetected_e78ba6cd-6cdb-48bf-b5b7-28d2f69dd88a
+	fromColumn: fact_earthquake.mag_category_key
+	toColumn: dim_mag_category.mag_category_key
+
+relationship c3de45bc-9039-21ce-9d4a-a7f91b0d8c02
+	fromColumn: fact_earthquake.event_date
+	toColumn: dim_date.date
+

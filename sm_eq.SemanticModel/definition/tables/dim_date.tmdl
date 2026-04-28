@@ -1,0 +1,88 @@
+table dim_date
+	lineageTag: f1e7fee6-004c-4c96-ac10-57718727ad7d
+	sourceLineageTag: [dbo].[dim_date]
+
+	column date_key
+		dataType: int64
+		formatString: 0
+		lineageTag: 7b9dcbcb-c96b-42bd-bb66-ec5c97fa2644
+		sourceLineageTag: date_key
+		summarizeBy: sum
+		sourceColumn: date_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column date
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 0e8b1af2-28a2-460f-8a7b-8211a90fb216
+		sourceLineageTag: date
+		summarizeBy: none
+		sourceColumn: date
+
+		annotation SummarizationSetBy = Automatic
+
+	column year
+		dataType: double
+		lineageTag: 6ca48df3-b27c-495a-85c7-6b26ed4102fa
+		sourceLineageTag: year
+		summarizeBy: sum
+		sourceColumn: year
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column month_num
+		dataType: int64
+		formatString: 0
+		lineageTag: b54a7473-7803-4bbc-b537-abc4d238ea20
+		sourceLineageTag: month_num
+		summarizeBy: sum
+		sourceColumn: month_num
+
+		annotation SummarizationSetBy = Automatic
+
+	column month_name
+		dataType: string
+		lineageTag: 408c4b2e-7ef9-481a-ad07-92dc1130b471
+		sourceLineageTag: month_name
+		summarizeBy: none
+		sourceColumn: month_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column month_short_name
+		dataType: string
+		lineageTag: 92e98ca5-a4da-4b01-a5c8-912bb7b62380
+		sourceLineageTag: month_short_name
+		summarizeBy: none
+		sourceColumn: month_short_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column northern_hemispher_season
+		dataType: string
+		lineageTag: cc89174e-983a-45ec-a94f-10e80a90cef4
+		sourceLineageTag: northern_hemispher_season
+		summarizeBy: none
+		sourceColumn: northern_hemispher_season
+
+		annotation SummarizationSetBy = Automatic
+
+	column southern_hemoispher_season
+		dataType: string
+		lineageTag: 7c82dbc7-fb80-405a-9032-bdb84886b710
+		sourceLineageTag: southern_hemoispher_season
+		summarizeBy: none
+		sourceColumn: southern_hemoispher_season
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_date = entity
+		mode: directLake
+		source
+			entityName: dim_date
+			schemaName: dbo
+			expressionSource: 'DirectLake - wh_earthquake'
+

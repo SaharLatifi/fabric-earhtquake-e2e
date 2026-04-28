@@ -1,0 +1,93 @@
+table dim_country
+	lineageTag: 4d6d955d-dfbc-4598-adfc-cd775b95ea59
+	sourceLineageTag: [dbo].[dim_country]
+
+	column country_key
+		dataType: int64
+		formatString: 0
+		lineageTag: 0e48ecc6-f748-478c-be44-9f4338d256e4
+		sourceLineageTag: country_key
+		summarizeBy: sum
+		sourceColumn: country_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column country_name
+		dataType: string
+		lineageTag: 39d33121-494c-4fae-bd2e-b949389966e1
+		sourceLineageTag: country_name
+		summarizeBy: none
+		sourceColumn: country_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column country_code
+		dataType: string
+		lineageTag: 3bf17391-9146-448f-93a1-98a6b8572ebf
+		sourceLineageTag: country_code
+		summarizeBy: none
+		sourceColumn: country_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column region
+		dataType: string
+		lineageTag: 8f907629-24eb-4738-b4fd-fdcd6c7167c2
+		sourceLineageTag: region
+		summarizeBy: none
+		sourceColumn: region
+
+		annotation SummarizationSetBy = Automatic
+
+	column sub-region
+		dataType: string
+		lineageTag: 994703e1-4940-426a-b7f9-f3d1ab264bc9
+		sourceLineageTag: sub-region
+		summarizeBy: none
+		sourceColumn: sub-region
+
+		annotation SummarizationSetBy = Automatic
+
+	column intermediate-region
+		dataType: string
+		lineageTag: 24b2fb23-f430-4c4d-97fb-95e6b2455276
+		sourceLineageTag: intermediate-region
+		summarizeBy: none
+		sourceColumn: intermediate-region
+
+		annotation SummarizationSetBy = Automatic
+
+	column region-code
+		dataType: string
+		lineageTag: b38b00f8-7560-4748-b6a9-4dd2039918d6
+		sourceLineageTag: region-code
+		summarizeBy: none
+		sourceColumn: region-code
+
+		annotation SummarizationSetBy = Automatic
+
+	column sub-region-code
+		dataType: string
+		lineageTag: e68aa6e4-6860-4a14-b5c5-b24fc874b6b9
+		sourceLineageTag: sub-region-code
+		summarizeBy: none
+		sourceColumn: sub-region-code
+
+		annotation SummarizationSetBy = Automatic
+
+	column intermediate-region-code
+		dataType: string
+		lineageTag: 58a06619-4b80-4b00-ae98-68047756fe4e
+		sourceLineageTag: intermediate-region-code
+		summarizeBy: none
+		sourceColumn: intermediate-region-code
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_country = entity
+		mode: directLake
+		source
+			entityName: dim_country
+			schemaName: dbo
+			expressionSource: 'DirectLake - wh_earthquake'
+

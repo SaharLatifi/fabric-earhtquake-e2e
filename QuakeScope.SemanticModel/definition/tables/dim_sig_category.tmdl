@@ -1,0 +1,57 @@
+table dim_sig_category
+	lineageTag: a10dcd16-07a5-439c-a259-abe5321ccdca
+
+	column sig_category_key
+		dataType: int64
+		formatString: 0
+		lineageTag: 8762a4ee-bca7-45da-9309-d10401fac5a7
+		summarizeBy: none
+		sourceColumn: sig_category_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column category_name
+		dataType: string
+		lineageTag: c5d5ee68-56bb-4b46-aed4-924de451d28f
+		summarizeBy: none
+		sourceColumn: category_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column min_value
+		dataType: int64
+		formatString: 0
+		lineageTag: d74fbed0-0288-44ca-9530-e275fdbc0590
+		summarizeBy: none
+		sourceColumn: min_value
+
+		annotation SummarizationSetBy = Automatic
+
+	column max_value
+		dataType: int64
+		formatString: 0
+		lineageTag: 66264591-99dc-45c2-b200-5f33ccebbc6e
+		summarizeBy: none
+		sourceColumn: max_value
+
+		annotation SummarizationSetBy = Automatic
+
+	column sort_order
+		dataType: int64
+		formatString: 0
+		lineageTag: dc68cf01-cd01-48cc-b3fa-f22e14af4dc5
+		summarizeBy: none
+		sourceColumn: sort_order
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_sig_category = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Databases("rkj7snxuboee3jlafmd3vdymgq-zvcbjo5ismeeziq2q7xjuhfivu.datawarehouse.fabric.microsoft.com"),
+				    wh_earthquake = Source{[Name="wh_earthquake"]}[Data],
+				    dbo_dim_sig_category = wh_earthquake{[Schema="dbo",Item="dim_sig_category"]}[Data]
+				in
+				    dbo_dim_sig_category
+

@@ -1,0 +1,315 @@
+table fact_earthquake
+	lineageTag: 3ced80d5-3890-4b55-8646-40ff0c40d71a
+	sourceLineageTag: [dbo].[fact_earthquake]
+
+	measure '_number of earhquakes' = COUNTX(fact_earthquake , fact_earthquake[event_date])
+		formatString: 0
+		displayFolder: _measures
+		lineageTag: df92bb9c-dc71-434d-9391-a332b3784520
+
+		changedProperty = Name
+
+		changedProperty = DisplayFolder
+
+	measure '_average mag' = AVERAGEX(fact_earthquake, fact_earthquake[mag])
+		displayFolder: _measures
+		lineageTag: b1bc1eab-42c3-4bc2-be24-13f33616fb70
+
+		changedProperty = DisplayFolder
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '_maximun sig' = MAXX(fact_earthquake,fact_earthquake[sig])
+		formatString: 0
+		displayFolder: _measures
+		lineageTag: f1a33408-c179-4729-979f-1d0b07929458
+
+		changedProperty = DisplayFolder
+
+		changedProperty = Name
+
+	measure '_maximum mag' = MAXX(fact_earthquake,fact_earthquake[mag])
+		displayFolder: _measures
+		lineageTag: 4bac5279-caf1-4c80-82a5-62c3da57e1ea
+
+		changedProperty = DisplayFolder
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '_average depth' = AVERAGEX(fact_earthquake, fact_earthquake[depth])
+		displayFolder: _measures
+		lineageTag: d1bcbdc2-62e0-4a74-9e33-2a7bb859907d
+
+		changedProperty = DisplayFolder
+
+		changedProperty = Name
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '_recent 5 Earthquakes HTML' =
+			
+			VAR RecentEvents =
+			    TOPN(
+			        5,
+			        ALLSELECTED('fact_earthquake'),
+			        'fact_earthquake'[event_date], DESC,
+			        'fact_earthquake'[event_id], DESC
+			    )
+			
+			RETURN
+			"<div style='font-family:Segoe UI;'>" &
+			"<div style='font-weight:600; font-size:15px; margin-bottom:6px;'>Recent Earthquakes</div>" &
+			CONCATENATEX(
+			    RecentEvents,
+			    "<div style='padding:8px 0; border-bottom:1px dashed #999; font-size:13px;'>" &
+			        "<b>Magnitude:</b> " & FORMAT('fact_earthquake'[mag], "0.0") & "<br>" &
+			        "<b>Depth:</b> " & FORMAT('fact_earthquake'[depth], "0.0") & " km<br>" &
+			        "<b>Country:</b> " &
+			            LOOKUPVALUE(
+			                'dim_country'[country_name],
+			                'dim_country'[country_key],
+			                'fact_earthquake'[country_key]
+			            ) & "<br>" &
+			        "<b>Location:</b> " & 'fact_earthquake'[location] &
+			    "</div>",
+			    "",
+			    'fact_earthquake'[event_date],
+			    DESC
+			) &
+			"</div>"
+		displayFolder: _measures
+		lineageTag: f801d166-98a0-4715-bcc8-497d14c4a971
+
+		changedProperty = DisplayFolder
+
+		changedProperty = Name
+
+	measure '_last refresh date' =
+			
+			"Last updated: " &
+			FORMAT(
+			    MAX('fact_earthquake'[updated_at]),
+			    "mmm dd, yyyy hh:mm AM/PM"
+			)
+		displayFolder: _measures
+		lineageTag: c5f13726-db0e-4130-af11-a92451bb35bf
+
+		changedProperty = DisplayFolder
+
+		changedProperty = Name
+
+	column event_id
+		dataType: string
+		sourceProviderType: varchar(100)
+		lineageTag: 4b26ae89-0936-4dd8-b8ad-a285dd72381e
+		sourceLineageTag: event_id
+		summarizeBy: none
+		sourceColumn: event_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column event_date
+		dataType: dateTime
+		formatString: Short Date
+		sourceProviderType: datetime2
+		lineageTag: bfda284e-96e2-4f5b-ac06-0aa00f9e1ad6
+		sourceLineageTag: event_date
+		summarizeBy: none
+		sourceColumn: event_date
+
+		changedProperty = DataType
+
+		changedProperty = FormatString
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isCustom":true}
+
+	column event_time
+		dataType: dateTime
+		formatString: Long Time
+		sourceProviderType: datetime2
+		lineageTag: 5be279f9-7e14-4351-9433-7a1773c82877
+		sourceLineageTag: event_time
+		summarizeBy: none
+		sourceColumn: event_time
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Time
+
+	column country_key
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 3dd57a5e-3a7e-4863-b068-eb9f656f206d
+		sourceLineageTag: country_key
+		summarizeBy: none
+		sourceColumn: country_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column sig
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 90d8f389-36a2-436d-8550-4617324e49c5
+		sourceLineageTag: sig
+		summarizeBy: sum
+		sourceColumn: sig
+
+		annotation SummarizationSetBy = Automatic
+
+	column mag
+		dataType: double
+		sourceProviderType: float
+		lineageTag: 59e59888-8d50-4577-b066-15841d4d9b4f
+		sourceLineageTag: mag
+		summarizeBy: sum
+		sourceColumn: mag
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column mag_category_key
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 471b6503-85f7-4a28-896e-ff7a7a270867
+		sourceLineageTag: mag_category_key
+		summarizeBy: none
+		sourceColumn: mag_category_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column sig_category_key
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 6115628e-9176-4dc1-bb52-f172220011ac
+		sourceLineageTag: sig_category_key
+		summarizeBy: none
+		sourceColumn: sig_category_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column depth_category_key
+		dataType: int64
+		formatString: 0
+		sourceProviderType: int
+		lineageTag: 7c8b5bb4-c1b4-4f76-8c4e-0f6ab6989f47
+		sourceLineageTag: depth_category_key
+		summarizeBy: none
+		sourceColumn: depth_category_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_tsunami
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		sourceProviderType: int
+		lineageTag: f3485735-b066-458b-a4a7-db0f80544885
+		sourceLineageTag: is_tsunami
+		summarizeBy: none
+		sourceColumn: is_tsunami
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+	column lat
+		dataType: double
+		sourceProviderType: float
+		lineageTag: 30122c25-890d-47c7-940d-fecb5b54412e
+		sourceLineageTag: lat
+		summarizeBy: sum
+		sourceColumn: lat
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column lon
+		dataType: double
+		sourceProviderType: float
+		lineageTag: da6f43ea-a5db-4204-a25e-2dc8048c5637
+		sourceLineageTag: lon
+		summarizeBy: sum
+		sourceColumn: lon
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column depth
+		dataType: double
+		sourceProviderType: float
+		lineageTag: 3b51823f-c809-456f-a4fb-11a8cd33fc72
+		sourceLineageTag: depth
+		summarizeBy: sum
+		sourceColumn: depth
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column hemisphere
+		dataType: string
+		sourceProviderType: varchar(100)
+		lineageTag: 1fdce193-7d5f-403a-837c-aac0025ab293
+		sourceLineageTag: hemisphere
+		summarizeBy: none
+		sourceColumn: hemisphere
+
+		annotation SummarizationSetBy = Automatic
+
+	column updated_at
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: 3b8e7cc8-6531-4d8d-9317-920e142b1479
+		sourceLineageTag: updated_at
+		summarizeBy: none
+		sourceColumn: updated_at
+
+		annotation SummarizationSetBy = Automatic
+
+	column ingested_at
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetime2
+		lineageTag: 7ae77f4e-e67f-4d77-9d6c-1590943314e3
+		sourceLineageTag: ingested_at
+		summarizeBy: none
+		sourceColumn: ingested_at
+
+		annotation SummarizationSetBy = Automatic
+
+	column location
+		dataType: string
+		sourceProviderType: varchar(500)
+		lineageTag: dd52b698-a241-4ee1-973c-9dedf752babf
+		sourceLineageTag: location
+		summarizeBy: none
+		sourceColumn: location
+
+		annotation SummarizationSetBy = Automatic
+
+	partition fact_earthquake = entity
+		mode: directLake
+		source
+			entityName: fact_earthquake
+			schemaName: dbo
+			expressionSource: DatabaseQuery
+
+	annotation PBI_ResultType = Table
+

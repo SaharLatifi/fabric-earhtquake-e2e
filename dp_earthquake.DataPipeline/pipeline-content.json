@@ -113,8 +113,8 @@
       {
         "type": "TridentNotebook",
         "typeProperties": {
-          "notebookId": "dafdc384-194e-a78f-4a42-1b983c89bff8",
-          "workspaceId": "00000000-0000-0000-0000-000000000000",
+          "notebookId": "3c89bff8-1b98-4a42-a78f-194edafdc384",
+          "workspaceId": "bb1444cd-93a8-4c08-a21a-87ee9a1ca8ad",
           "parameters": {
             "start_date": {
               "value": {
@@ -133,6 +133,8 @@
           "secureOutput": false
         },
         "name": "gold layer nb",
+        "state": "Inactive",
+        "onInactiveMarkAs": "Succeeded",
         "dependsOn": [
           {
             "activity": "silver layer nb",
@@ -250,7 +252,7 @@
             {
               "type": "RefreshDataflow",
               "typeProperties": {
-                "dataflowId": "50b2d562-b490-97c0-4ac3-33947f444e75",
+                "dataflowId": "7865cece-7642-bf55-4c1a-daff80519263",
                 "workspaceId": "00000000-0000-0000-0000-000000000000",
                 "notifyOption": "NoNotification",
                 "dataflowType": "DataflowFabric"
@@ -289,7 +291,7 @@
             {
               "type": "RefreshDataflow",
               "typeProperties": {
-                "dataflowId": "ef665284-84aa-b5de-492f-b60327c2c3f2",
+                "dataflowId": "f516d83f-c4d2-9884-4f5a-6511bc04e99d",
                 "workspaceId": "00000000-0000-0000-0000-000000000000",
                 "notifyOption": "NoNotification",
                 "dataflowType": "DataflowFabric"
@@ -310,6 +312,52 @@
         "dependsOn": [
           {
             "activity": "Check if dim_country exists",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "SqlServerStoredProcedure",
+        "typeProperties": {
+          "storedProcedureName": "[dbo].[sp_load_gold_layer]",
+          "storedProcedureParameters": {
+            "start_date": {
+              "value": {
+                "value": "@variables('v_start_date')",
+                "type": "Expression"
+              },
+              "type": "Datetime"
+            }
+          }
+        },
+        "connectionSettings": {
+          "name": "wh_earthquake",
+          "properties": {
+            "type": "DataWarehouse",
+            "typeProperties": {
+              "artifactId": "ff092a76-b4ad-4ff9-80c6-4c30ba503591",
+              "endpoint": "rkj7snxuboee3jlafmd3vdymgq-zvcbjo5ismeeziq2q7xjuhfivu.datawarehouse.fabric.microsoft.com",
+              "workspaceId": "bb1444cd-93a8-4c08-a21a-87ee9a1ca8ad"
+            },
+            "externalReferences": {
+              "connection": "4f28933b-3443-427b-9eb8-1807cc5fcf9e"
+            },
+            "annotations": []
+          }
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "load dimensional data",
+        "dependsOn": [
+          {
+            "activity": "if dim_date exists",
             "dependencyConditions": [
               "Succeeded"
             ]

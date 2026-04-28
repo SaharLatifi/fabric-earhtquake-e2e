@@ -1,0 +1,190 @@
+table fact_earthquake
+	lineageTag: 88d2c8aa-326d-481d-9398-12e72b07be9e
+
+	column event_id
+		dataType: string
+		lineageTag: d7022222-3d1a-45e8-aa3f-59419bdb4c96
+		summarizeBy: none
+		sourceColumn: event_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column event_date
+		dataType: dateTime
+		formatString: yyyy/mm/dd
+		lineageTag: 897386f4-a5f2-4bec-96c7-c12e09dbaa08
+		summarizeBy: none
+		sourceColumn: event_date
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isCustom":true}
+
+	column event_time
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: ada618f0-fe70-484f-81f7-ce8dc49dfba1
+		summarizeBy: none
+		sourceColumn: event_time
+
+		variation Variation
+			isDefault
+			relationship: bf196c51-8cf4-4cdd-a65a-af15e6df900d
+			defaultHierarchy: LocalDateTable_801d2089-4def-4656-b4ce-d65b555a3cea.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column country_key
+		dataType: int64
+		formatString: 0
+		lineageTag: 31d42908-6553-4ce0-aee5-a7e57173bb0e
+		summarizeBy: none
+		sourceColumn: country_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column sig
+		dataType: int64
+		formatString: 0
+		lineageTag: 39a68040-6e3f-415e-9299-ca3d7f636ad1
+		summarizeBy: sum
+		sourceColumn: sig
+
+		annotation SummarizationSetBy = Automatic
+
+	column mag
+		dataType: double
+		lineageTag: 14c108f8-59e9-43f3-872f-928084cd0f2b
+		summarizeBy: sum
+		sourceColumn: mag
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column mag_category_key
+		dataType: int64
+		formatString: 0
+		lineageTag: b0564a8e-aa7a-4ffb-908d-b7d8aec1ea98
+		summarizeBy: none
+		sourceColumn: mag_category_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column sig_category_key
+		dataType: int64
+		formatString: 0
+		lineageTag: ca55adbd-10bd-4180-91c4-e3129f8d6367
+		summarizeBy: none
+		sourceColumn: sig_category_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column depth_category_key
+		dataType: int64
+		formatString: 0
+		lineageTag: 81cddfca-fad2-441b-bb09-eec5eefa637a
+		summarizeBy: none
+		sourceColumn: depth_category_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_tsunami
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: dabb161b-6144-4fa6-91ed-c0865d9e07d1
+		summarizeBy: none
+		sourceColumn: is_tsunami
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+	column lat
+		dataType: double
+		lineageTag: 2f29d84b-11d6-4751-a366-31c34da1710b
+		summarizeBy: sum
+		sourceColumn: lat
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column lon
+		dataType: double
+		lineageTag: c2ab147d-c7ab-4c29-a8ff-5382ceb83bdb
+		summarizeBy: sum
+		sourceColumn: lon
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column depth
+		dataType: double
+		lineageTag: 1ee1effb-ab97-4eb4-84ab-260ecd16aba9
+		summarizeBy: sum
+		sourceColumn: depth
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column hemisphere
+		dataType: string
+		lineageTag: a0ca7c04-ca19-4ecc-b14a-0d25be681d15
+		summarizeBy: none
+		sourceColumn: hemisphere
+
+		annotation SummarizationSetBy = Automatic
+
+	column updated_at
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: a2e28019-cd96-4621-8ce9-1f117835ece7
+		summarizeBy: none
+		sourceColumn: updated_at
+
+		variation Variation
+			isDefault
+			relationship: bb67d19f-8951-4eac-b65c-1836d3e81265
+			defaultHierarchy: LocalDateTable_2fd8a440-4ce5-4f02-b81c-4018bcc5fae0.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column ingested_at
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 9402a8bd-89b9-4b45-bea2-cae7b5ee6544
+		summarizeBy: none
+		sourceColumn: ingested_at
+
+		variation Variation
+			isDefault
+			relationship: 9e4cf4b6-0e90-44f9-9191-b9c1ae0f9222
+			defaultHierarchy: LocalDateTable_92fb519e-a879-49fd-b6d4-429c25124783.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column location
+		dataType: string
+		lineageTag: 86b2c7e7-d721-47e7-818f-b8dc913ea858
+		summarizeBy: none
+		sourceColumn: location
+
+		annotation SummarizationSetBy = Automatic
+
+	partition fact_earthquake = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Databases("rkj7snxuboee3jlafmd3vdymgq-zvcbjo5ismeeziq2q7xjuhfivu.datawarehouse.fabric.microsoft.com"),
+				    wh_earthquake = Source{[Name="wh_earthquake"]}[Data],
+				    dbo_fact_earthquake = wh_earthquake{[Schema="dbo",Item="fact_earthquake"]}[Data]
+				in
+				    dbo_fact_earthquake
+
