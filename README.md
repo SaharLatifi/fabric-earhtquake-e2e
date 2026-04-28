@@ -65,10 +65,7 @@ A dedicated Fabric environment is used to install the `reverse_geocoder` library
 
 An architecture diagram is provided below to illustrate the end-to-end data flow.
 
-![Architecture Diagram](architecture/Architecture.png)
-
-➡️ **[Open full-size diagram](architecture/Architecture.png)**
-
+![Architecture](docs/Architecture.png)
 ---
 ## Data Model
 The solution uses a star schema design to support efficient analytical queries.
@@ -79,32 +76,43 @@ The solution uses a star schema design to support efficient analytical queries.
   - **dim_mag_category**
   - **dim_depth_category**
   - **dim_sig_category**
+  - **dim_date**
 
 This structure enables flexible analysis across geographic, temporal, and categorical dimensions.
 ![Data Model](docs/data-model.png)
 
 
-## Pipeline Overview
+## Data Pipeline
 
-> **Note (Design Simplification)**
->  
-> To simplify this end-to-end practice project, the pipeline assumes daily execution and processes only the previous day's file.  
->  
-> I’m aware this approach is not fully idempotent, as missed or failed runs may result in unprocessed data.  
->  
-> For the purpose of this project, I’ve intentionally skipped implementing a more robust ingestion pattern to keep the pipeline simple and focused on the core flow.
+The pipeline orchestrates the end-to-end data flow from ingestion to analytics using notebooks, dataflows, and a stored procedure.
 
-**Bronze Layer (Notebook → Lakehouse)**  
-- Notebook extracts earthquake data from the API for a fixed date range (today-7 to today-1)  
-- Raw data is stored in the Lakehouse (Bronze layer)
+> **Note (Design Simplification)**  
+> The pipeline uses a rolling 7-day window (today-7 to today-1) to capture new and updated events.  
+> Idempotency and full reprocessing logic are simplified for this project but would be required in a production setting.
 
-**Silver Layer (Notebook → Lakehouse)**  
-- Notebook processes the previous day's file  
-- Applies basic transformations and writes cleaned data to Silver tables in the Lakehouse  
+### Bronze Layer (Notebook → Lakehouse)
+- Extracts earthquake data from the USGS API using a rolling 7-day window  
+- Stores raw JSON data in the Lakehouse  
 
-**Gold Layer (Stored Procedure → Warehouse)**  
-- Stored procedure loads data from Silver into dimensional and fact tables  
-- Data is stored in the Warehouse for reporting and analytics  
+### Silver Layer (Notebook → Lakehouse)
+- Processes raw data from the Bronze layer  
+- Applies transformations and data quality checks  
+- Writes structured data to Silver tables  
+
+### Gold Layer (Stored Procedure → Warehouse)
+- Loads data from Silver into dimensional and fact tables  
+- Uses a stored procedure to populate the analytical model  
+- Stores data in the Warehouse for reporting and Power BI
+- 
+- ![Pipeline](docs/pipeline.png)
+
+
+
+
+
+
+
+
 
 
 
