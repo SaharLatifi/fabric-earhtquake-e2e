@@ -1,16 +1,5 @@
 # fabric-earthquake-e2e 🌍
 
-## Table of Contents
-- [Project Overview](#project-overview)
-- [Business Questions](#business-questions)
-- [Architecture](#architecture)
-- [Data Model](#data-model)
-- [Data Pipeline](#data-pipeline--processing)
-- [Dashboard](#dashboard-power-bi)
-- [Repository Structure](#repository-structure)
-- [Tech Stack](#tech-stack)
-
-
 ## Project Overview
 
 This project explores global earthquake data using Microsoft Fabric. The data is sourced from the USGS Earthquake API and processed through an end-to-end data pipeline.
@@ -51,16 +40,13 @@ This project follows the Medallion Architecture pattern to structure data proces
 - Flattens and standardizes the raw JSON data  
 - Extracts key fields (magnitude, location, timestamps, coordinates)  
 - Applies data quality validations (critical and non-critical checks)  
-- Uses an upsert (merge) strategy to maintain a consolidated dataset  
-
+- Maintains a consolidated dataset by handling new and updated records
+  
 ### Gold — Analytics-Ready Data
 - Enriches data for analytical use  
-- Derives country from coordinates using reverse geocoding  
+- Derives country from coordinates using reverse geocoding, enabled through a dedicated Fabric environment
 - Enriches the dataset with derived attributes (significance, depth)
 - Produces a curated dataset optimized for reporting and Power BI  
-
-**Environment Setup**
-A dedicated Fabric environment is used to install the `reverse_geocoder` library, enabling derivation of `country_code` from geographic coordinates.
 
 
 An architecture diagram is provided below to illustrate the end-to-end data flow.
@@ -117,7 +103,7 @@ Users can explore:
 - Distribution by depth and significance  
 - Recent and high-impact earthquake events  
 
-The final dataset from the **Gold Layer** is used in **Power BI** to build dashboards and explore earthquake patterns and insights.
+The final semantic model from the **Gold Layer** is used in **Power BI** to build dashboards and explore earthquake patterns and insights.
 
 [🔗 View Interactive Dashboard](<your-public-link-here>)
 
